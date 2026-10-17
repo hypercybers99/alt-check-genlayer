@@ -1,0 +1,27 @@
+{
+  "name": "alt-check-genlayer",
+  "version": "1.0.0",
+  "description": "AltCheck: Consensus-audited web accessibility ledger on GenLayer Studionet (Preview)",
+  "type": "commonjs",
+  "scripts": {
+    "test": "python -m unittest discover tests",
+    "scan:ascii": "python scripts/tools/scan_ascii.py",
+    "scan:banned": "python scripts/tools/scan_banned_words.py",
+    "verify:source": "node scripts/tools/verify_source.js",
+    "check:consistency": "node scripts/tools/check_evidence_consistency.js",
+    "render:evidence": "node scripts/tools/render_evidence.js",
+    "check": "npm run test && npm run scan:ascii && npm run scan:banned && npm run verify:source && npm run check:consistency"
+  },
+  "keywords": [
+    "genlayer",
+    "accessibility",
+    "wcag",
+    "intelligent-contracts",
+    "consensus"
+  ],
+  "author": "Hyper (huzyow155)",
+  "license": "MIT",
+  "dependencies": {
+    "genlayer-js": "^1.1.8"
+  }
+}

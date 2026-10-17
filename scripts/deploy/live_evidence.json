@@ -1,0 +1,883 @@
+{
+  "network": "GenLayer Studionet (Preview)",
+  "chainId": 61999,
+  "rpc": "https://studio.genlayer.com/api",
+  "version": "1.0.0",
+  "contractAddress": "0xBA2D886E76b87feD8dCd5be61fccFA2A4e1D388A",
+  "deployTxHash": "0xf2ec73168cf65d504ddedf4b965bce56d9fa399c86a955ce98f06600e992f9db",
+  "deployStatus": "ACCEPTED",
+  "consensusResult": "MAJORITY_AGREE",
+  "sourceSha256": "b9c55a75970aca12f11edaf447e16a09a1d9a8a661e068e3ef2a5cddaa00e202",
+  "recordedAt": "2026-10-17T16:15:37.985Z",
+  "positiveScenarios": {
+    "scenario_good": {
+      "title": "Scenario 1: Clean Accessible Page Audit (Grade A)",
+      "pageId": "7a3668090880",
+      "url": "https://huzyow155.github.io/alt-check-fixtures/good.html",
+      "registerTx": "0xf49c85bd84833fb8ebd54b9cd8b6b0f40718056372cc62407c455069615d5adf",
+      "registerAgree": "5/5",
+      "auditTx": "0x76ffa62456a54ab77af846e6b3c41bb302fae5af12830a96e168922b227bc57b",
+      "auditAgree": "3/5",
+      "auditElapsed": "15.73",
+      "score": 100,
+      "grade": "A",
+      "mode": "FULL",
+      "ruleCounts": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 0,
+        "R4": 0,
+        "R5": 0,
+        "R6": 0,
+        "R7": 0,
+        "R8": 0,
+        "R9": 0,
+        "R10": 0,
+        "R11": 0,
+        "R12": 0
+      },
+      "pageRecord": {
+        "id": "7a3668090880",
+        "label": "Accessible Portfolio Demonstration",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/good.html",
+        "registrant": "0xf56027a31727c791e57b6ef5668df936abd6ab6d",
+        "registered_at": "2026-10-17T16:14:27Z",
+        "registered_ts": 1792253667,
+        "audits_total": 1,
+        "latest_n": 1,
+        "latest_mode": "FULL",
+        "latest_score": 100,
+        "latest_grade": "A",
+        "best_score": 100,
+        "first_full_score": 100,
+        "last_audit_ts": 1792253677,
+        "retired": false
+      },
+      "auditRecord": {
+        "page_id": "7a3668090880",
+        "n": 1,
+        "auditor": "0xf56027a31727c791e57b6ef5668df936abd6ab6d",
+        "at": "2026-10-17T16:14:37Z",
+        "ts": 1792253677,
+        "final_url": "https://huzyow155.github.io/alt-check-fixtures/good.html",
+        "cross_host_redirect": false,
+        "fetched_bytes": 2560,
+        "truncated": false,
+        "body_sha256": "5029e539717c694d6a676d1b96bb81c50a2224a1f5039298da61ecb33ffe79f7",
+        "mode": "FULL",
+        "visible_text_chars": 941,
+        "script_tag_count": 0,
+        "decorative_unmarked": 0,
+        "rule_counts": {
+          "R1": 0,
+          "R2": 0,
+          "R3": 0,
+          "R4": 0,
+          "R5": 0,
+          "R6": 0,
+          "R7": 0,
+          "R8": 0,
+          "R9": 0,
+          "R10": 0,
+          "R11": 0,
+          "R12": 0
+        },
+        "snippets": {
+          "R1": [],
+          "R2": [],
+          "R3": [],
+          "R4": [],
+          "R5": [],
+          "R6": [],
+          "R7": [],
+          "R8": [],
+          "R9": [],
+          "R10": [],
+          "R11": [],
+          "R12": []
+        },
+        "model_labels": [
+          {
+            "kind": "alt",
+            "text": "Architectural block diagram showing consensus validator flow and smart contract state ledger",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "link",
+            "text": "Submit registration details",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "link",
+            "text": "Detailed technical release notes for version two milestone",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "link",
+            "text": "Read full WCAG consensus specification document",
+            "label": "CLEAR"
+          }
+        ],
+        "vague_count": 0,
+        "model_penalty": 0,
+        "score": 100,
+        "grade": "A",
+        "notes": []
+      }
+    },
+    "scenario_bad": {
+      "title": "Scenario 2: Defective Page Audit Across R1-R12 (Grade F)",
+      "pageId": "fb8e88494068",
+      "url": "https://huzyow155.github.io/alt-check-fixtures/bad.html",
+      "registerTx": "0x5dd313162b96fe4a1c9f7315f7c48fb6974cdaedfb4b9635765019ecd54e4332",
+      "registerAgree": "5/5",
+      "auditTx": "0x91a150f5099aa1dab66055589a3184be8c1ebf70f65b0f328dd50d4bb2cdcd2d",
+      "auditAgree": "3/5",
+      "auditElapsed": "12.20",
+      "score": 25,
+      "grade": "F",
+      "mode": "FULL",
+      "ruleCounts": {
+        "R1": 3,
+        "R2": 3,
+        "R3": 3,
+        "R4": 4,
+        "R5": 2,
+        "R6": 1,
+        "R7": 1,
+        "R8": 1,
+        "R9": 1,
+        "R10": 2,
+        "R11": 1,
+        "R12": 1
+      },
+      "decorativeUnmarked": 2,
+      "snippets": {
+        "R1": [
+          "<img src=\"chart1.png\">",
+          "<img src=\"logo.jpg\">",
+          "<img src=\"banner.webp\">"
+        ],
+        "R2": [
+          "<img src=\"shot.png\" alt=\"screenshot.png\">",
+          "<img src=\"cam.jpg\" alt=\"photo\">",
+          "<img src=\"dsc.jpg\" alt=\"IMG_9942.jpg\">"
+        ],
+        "R3": [
+          "<input type=\"text\" name=\"unnamed_input\" placeholder=\"Enter text without label\">",
+          "<select name=\"unnamed_select\">",
+          "<textarea name=\"unnamed_textarea\" placeholder=\"Enter comments\">"
+        ],
+        "R4": [
+          "<a href=\"/dest1\">",
+          "<a href=\"/dest2\">",
+          "<a href=\"/dest3\">",
+          "<button type=\"button\">"
+        ],
+        "R5": [
+          "<h1>",
+          "<h3>"
+        ],
+        "R6": [
+          "<html>"
+        ],
+        "R7": [],
+        "R8": [
+          "<div id=\"dup-box\" tabindex=\"1\">"
+        ],
+        "R9": [
+          "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0\">"
+        ],
+        "R10": [
+          "<div id=\"dup-box\" tabindex=\"1\">",
+          "<div id=\"dup-box\" tabindex=\"2\">"
+        ],
+        "R11": [
+          "<body>"
+        ],
+        "R12": [
+          "<iframe src=\"about:blank\">"
+        ]
+      },
+      "pageRecord": {
+        "id": "fb8e88494068",
+        "label": "Defective Legacy Form & Media",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/bad.html",
+        "registrant": "0xf56027a31727c791e57b6ef5668df936abd6ab6d",
+        "registered_at": "2026-10-17T16:14:55Z",
+        "registered_ts": 1792253695,
+        "audits_total": 1,
+        "latest_n": 1,
+        "latest_mode": "FULL",
+        "latest_score": 25,
+        "latest_grade": "F",
+        "best_score": 25,
+        "first_full_score": 25,
+        "last_audit_ts": 1792253702,
+        "retired": false
+      },
+      "auditRecord": {
+        "page_id": "fb8e88494068",
+        "n": 1,
+        "auditor": "0xf56027a31727c791e57b6ef5668df936abd6ab6d",
+        "at": "2026-10-17T16:15:02Z",
+        "ts": 1792253702,
+        "final_url": "https://huzyow155.github.io/alt-check-fixtures/bad.html",
+        "cross_host_redirect": false,
+        "fetched_bytes": 2326,
+        "truncated": false,
+        "body_sha256": "63c3a498e7d0fd6d136f13c651a81e9cd277b9e81c59cbc85f412a4b37b73daa",
+        "mode": "FULL",
+        "visible_text_chars": 698,
+        "script_tag_count": 0,
+        "decorative_unmarked": 2,
+        "rule_counts": {
+          "R1": 3,
+          "R2": 3,
+          "R3": 3,
+          "R4": 4,
+          "R5": 2,
+          "R6": 1,
+          "R7": 1,
+          "R8": 1,
+          "R9": 1,
+          "R10": 2,
+          "R11": 1,
+          "R12": 1
+        },
+        "snippets": {
+          "R1": [
+            "<img src=\"chart1.png\">",
+            "<img src=\"logo.jpg\">",
+            "<img src=\"banner.webp\">"
+          ],
+          "R2": [
+            "<img src=\"shot.png\" alt=\"screenshot.png\">",
+            "<img src=\"cam.jpg\" alt=\"photo\">",
+            "<img src=\"dsc.jpg\" alt=\"IMG_9942.jpg\">"
+          ],
+          "R3": [
+            "<input type=\"text\" name=\"unnamed_input\" placeholder=\"Enter text without label\">",
+            "<select name=\"unnamed_select\">",
+            "<textarea name=\"unnamed_textarea\" placeholder=\"Enter comments\">"
+          ],
+          "R4": [
+            "<a href=\"/dest1\">",
+            "<a href=\"/dest2\">",
+            "<a href=\"/dest3\">",
+            "<button type=\"button\">"
+          ],
+          "R5": [
+            "<h1>",
+            "<h3>"
+          ],
+          "R6": [
+            "<html>"
+          ],
+          "R7": [],
+          "R8": [
+            "<div id=\"dup-box\" tabindex=\"1\">"
+          ],
+          "R9": [
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0\">"
+          ],
+          "R10": [
+            "<div id=\"dup-box\" tabindex=\"1\">",
+            "<div id=\"dup-box\" tabindex=\"2\">"
+          ],
+          "R11": [
+            "<body>"
+          ],
+          "R12": [
+            "<iframe src=\"about:blank\">"
+          ]
+        },
+        "model_labels": [],
+        "vague_count": 0,
+        "model_penalty": 0,
+        "score": 25,
+        "grade": "F",
+        "notes": []
+      }
+    },
+    "scenario_mixed": {
+      "title": "Scenario 3: Model Layer Evaluation (mixed.html)",
+      "pageId": "2d7c92cd241c",
+      "url": "https://huzyow155.github.io/alt-check-fixtures/mixed.html",
+      "registerTx": "0xea682f80f6c386f77c78e0125a2d2a9fbd3beea6888a55a5ed7b82112d6aa45c",
+      "registerAgree": "5/5",
+      "auditTx": "0x4d9bca0236c68ee7766fbda3471c25c774db49e3e5be81913ae42c44599b5bad",
+      "auditAgree": "3/5",
+      "auditElapsed": "18.75",
+      "score": 88,
+      "grade": "B",
+      "mode": "FULL",
+      "ruleCounts": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 0,
+        "R4": 0,
+        "R5": 0,
+        "R6": 0,
+        "R7": 0,
+        "R8": 0,
+        "R9": 0,
+        "R10": 1,
+        "R11": 0,
+        "R12": 0
+      },
+      "vagueCount": 6,
+      "modelPenalty": 10,
+      "modelLabels": [
+        {
+          "kind": "alt",
+          "text": "Bar chart showing monthly registered developer signups from January to December 2025",
+          "label": "CLEAR"
+        },
+        {
+          "kind": "alt",
+          "text": "Aerial photograph of the University of Cambridge computer laboratory building in spring",
+          "label": "CLEAR"
+        },
+        {
+          "kind": "alt",
+          "text": "Infographic detailing the three-stage consensus pipeline from leader propose to validator vote",
+          "label": "CLEAR"
+        },
+        {
+          "kind": "alt",
+          "text": "Screenshot of the transaction inspection modal displaying gas metrics and error payloads",
+          "label": "CLEAR"
+        },
+        {
+          "kind": "alt",
+          "text": "the thing we made last week",
+          "label": "VAGUE"
+        },
+        {
+          "kind": "alt",
+          "text": "what happened earlier today",
+          "label": "VAGUE"
+        },
+        {
+          "kind": "alt",
+          "text": "some interesting items",
+          "label": "VAGUE"
+        },
+        {
+          "kind": "alt",
+          "text": "stuff and other content",
+          "label": "VAGUE"
+        },
+        {
+          "kind": "link",
+          "text": "Download the complete 2025 accessibility consensus annual audit report",
+          "label": "CLEAR"
+        },
+        {
+          "kind": "link",
+          "text": "View the real-time validator node uptime and voting distribution monitor",
+          "label": "CLEAR"
+        },
+        {
+          "kind": "link",
+          "text": "check out that update",
+          "label": "VAGUE"
+        },
+        {
+          "kind": "link",
+          "text": "see our thoughts on it",
+          "label": "VAGUE"
+        }
+      ],
+      "auditRecord": {
+        "page_id": "2d7c92cd241c",
+        "n": 1,
+        "auditor": "0xf56027a31727c791e57b6ef5668df936abd6ab6d",
+        "at": "2026-10-17T16:15:24Z",
+        "ts": 1792253724,
+        "final_url": "https://huzyow155.github.io/alt-check-fixtures/mixed.html",
+        "cross_host_redirect": false,
+        "fetched_bytes": 2777,
+        "truncated": false,
+        "body_sha256": "10e0b7849319e98822cd515c1b571eaa247956d741953ebe50704e132dfeb39b",
+        "mode": "FULL",
+        "visible_text_chars": 1020,
+        "script_tag_count": 0,
+        "decorative_unmarked": 0,
+        "rule_counts": {
+          "R1": 0,
+          "R2": 0,
+          "R3": 0,
+          "R4": 0,
+          "R5": 0,
+          "R6": 0,
+          "R7": 0,
+          "R8": 0,
+          "R9": 0,
+          "R10": 1,
+          "R11": 0,
+          "R12": 0
+        },
+        "snippets": {
+          "R1": [],
+          "R2": [],
+          "R3": [],
+          "R4": [],
+          "R5": [],
+          "R6": [],
+          "R7": [],
+          "R8": [],
+          "R9": [],
+          "R10": [
+            "<div tabindex=\"1\">"
+          ],
+          "R11": [],
+          "R12": []
+        },
+        "model_labels": [
+          {
+            "kind": "alt",
+            "text": "Bar chart showing monthly registered developer signups from January to December 2025",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "alt",
+            "text": "Aerial photograph of the University of Cambridge computer laboratory building in spring",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "alt",
+            "text": "Infographic detailing the three-stage consensus pipeline from leader propose to validator vote",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "alt",
+            "text": "Screenshot of the transaction inspection modal displaying gas metrics and error payloads",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "alt",
+            "text": "the thing we made last week",
+            "label": "VAGUE"
+          },
+          {
+            "kind": "alt",
+            "text": "what happened earlier today",
+            "label": "VAGUE"
+          },
+          {
+            "kind": "alt",
+            "text": "some interesting items",
+            "label": "VAGUE"
+          },
+          {
+            "kind": "alt",
+            "text": "stuff and other content",
+            "label": "VAGUE"
+          },
+          {
+            "kind": "link",
+            "text": "Download the complete 2025 accessibility consensus annual audit report",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "link",
+            "text": "View the real-time validator node uptime and voting distribution monitor",
+            "label": "CLEAR"
+          },
+          {
+            "kind": "link",
+            "text": "check out that update",
+            "label": "VAGUE"
+          },
+          {
+            "kind": "link",
+            "text": "see our thoughts on it",
+            "label": "VAGUE"
+          }
+        ],
+        "vague_count": 6,
+        "model_penalty": 10,
+        "score": 88,
+        "grade": "B",
+        "notes": []
+      }
+    }
+  },
+  "secondaryScenario": {
+    "title": "Scenario 5: Verified Before & After Remediation on Single Page ID",
+    "pageId": "b7eea06d23f8",
+    "url": "https://huzyow155.github.io/alt-check-fixtures/demo.html",
+    "initialCommit": "92d9e46cc7dc9c7cdba8b9007e24f0a78cddcdbb",
+    "remediatedCommit": "df679b4949503ca5a5209dd5708e28466e77ad67",
+    "registerTx": "0xb99a352c6b62ac72b21f47e643100c2220dc1142d2ac5720f286a0be022ba2bb",
+    "registerAgree": "3/5",
+    "audit1Tx": "0x94c2c711508de0da077b5fa9c237ee85e4b67a86ee8d8d04360896297668ceec",
+    "audit1Agree": "3/5",
+    "audit1Score": 25,
+    "audit1Grade": "F",
+    "audit2Tx": "0xf57ea28ef5d66b05aa966556ee7efb99ae1465bff9649cda4704212585aaca19",
+    "audit2Agree": "3/5",
+    "audit2Score": 100,
+    "audit2Grade": "A",
+    "progress": {
+      "status": "OK",
+      "page_id": "b7eea06d23f8",
+      "earlier_audit_n": 1,
+      "latest_audit_n": 2,
+      "earlier_score": 25,
+      "latest_score": 100,
+      "score_delta": 75,
+      "grade_change": {
+        "from": "F",
+        "to": "A"
+      },
+      "rule_deltas": {
+        "R1": -3,
+        "R2": -3,
+        "R3": -3,
+        "R4": -4,
+        "R5": -2,
+        "R6": -1,
+        "R7": -1,
+        "R8": -1,
+        "R9": -1,
+        "R10": -2,
+        "R11": -1,
+        "R12": -1
+      }
+    },
+    "maintainerNoteTx": "0xbf568744aed1ca7fbdc9d8b9fe2f3a6de69cd41002e6f09bd88e0f40f8d56d39",
+    "maintainerNoteAgree": "3/5"
+  },
+  "shellScenario": {
+    "title": "Scenario 4: SPA Shell Detection (SHELL_ONLY)",
+    "pageId": "bf442bd25d6e",
+    "url": "https://huzyow155.github.io/alt-check-fixtures/shell.html",
+    "registerTx": "0xb2f387828909c6cf2b1918d5786b4ec1a53150e95d4265b1c0ee36c88def8243",
+    "registerAgree": "4/5",
+    "auditTx": "0x254360074fee0e21c6e72822f21570deed57e7bc899881da44902b6e88a1a22c",
+    "auditAgree": "3/5",
+    "auditElapsed": "12.02",
+    "score": -1,
+    "grade": "N/A",
+    "mode": "SHELL_ONLY",
+    "ruleCounts": {
+      "R1": 0,
+      "R2": 0,
+      "R3": 0,
+      "R4": 0,
+      "R5": 0,
+      "R6": 0,
+      "R7": 0,
+      "R8": 0,
+      "R9": 0,
+      "R10": 0,
+      "R11": 0,
+      "R12": 0
+    },
+    "visibleTextChars": 44,
+    "scriptTagCount": 1,
+    "auditRecord": {
+      "page_id": "bf442bd25d6e",
+      "n": 1,
+      "auditor": "0xf56027a31727c791e57b6ef5668df936abd6ab6d",
+      "at": "2026-10-17T16:15:54Z",
+      "ts": 1792253754,
+      "final_url": "https://huzyow155.github.io/alt-check-fixtures/shell.html",
+      "cross_host_redirect": false,
+      "fetched_bytes": 317,
+      "truncated": false,
+      "body_sha256": "0301ceed5d8cabf98205b01c0793db403a09ae9b651fdd198ab07c5458490f51",
+      "mode": "SHELL_ONLY",
+      "visible_text_chars": 44,
+      "script_tag_count": 1,
+      "decorative_unmarked": 0,
+      "rule_counts": {
+        "R1": 0,
+        "R2": 0,
+        "R3": 0,
+        "R4": 0,
+        "R5": 0,
+        "R6": 0,
+        "R7": 0,
+        "R8": 0,
+        "R9": 0,
+        "R10": 0,
+        "R11": 0,
+        "R12": 0
+      },
+      "snippets": {
+        "R1": [],
+        "R2": [],
+        "R3": [],
+        "R4": [],
+        "R5": [],
+        "R6": [],
+        "R7": [],
+        "R8": [],
+        "R9": [],
+        "R10": [],
+        "R11": [],
+        "R12": []
+      },
+      "model_labels": [],
+      "vague_count": 0,
+      "model_penalty": 0,
+      "score": -1,
+      "grade": "N/A",
+      "notes": []
+    }
+  },
+  "negativeTests": {
+    "neg_http_scheme": {
+      "name": "Reject HTTP Scheme",
+      "fn": "register_page",
+      "args": [
+        "HTTP Rejection",
+        "http://example.com/page"
+      ],
+      "txHash": "0xb36218b9705ac3685b681bab8e34376c8c0b5d9f691034e5fe0c1063d8372e9e",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "url must use https",
+      "expected": "url must use https"
+    },
+    "neg_localhost": {
+      "name": "Reject Localhost",
+      "fn": "register_page",
+      "args": [
+        "Localhost Rejection",
+        "https://localhost/test"
+      ],
+      "txHash": "0x1446fac0edc3095daf9654f8c80b8996ce1eb6f79be1ce5de67c8a8d2d9d84f7",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "url host not allowed",
+      "expected": "url host not allowed"
+    },
+    "neg_ipv4_literal": {
+      "name": "Reject IPv4 Literal",
+      "fn": "register_page",
+      "args": [
+        "IPv4 Literal Rejection",
+        "https://127.0.0.1/app"
+      ],
+      "txHash": "0x83307a1e0c5ff6b6157c0f49ea6b04723d7ce58bf0a4368d2f4c928ef715a0a6",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "3/5",
+      "revertPayload": "url host not allowed",
+      "expected": "url host not allowed"
+    },
+    "neg_private_ip": {
+      "name": "Reject Private IP Range",
+      "fn": "register_page",
+      "args": [
+        "Private IP Rejection",
+        "https://192.168.1.1/admin"
+      ],
+      "txHash": "0x39665b87006aed50d39ce336f00286bbd3e21daa2e8ba2ae2c736c3bc972013c",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "3/5",
+      "revertPayload": "url host not allowed",
+      "expected": "url host not allowed"
+    },
+    "neg_userinfo": {
+      "name": "Reject Userinfo Credentials",
+      "fn": "register_page",
+      "args": [
+        "Userinfo Rejection",
+        "https://admin:pass@example.com/"
+      ],
+      "txHash": "0xc0db8b31c84475dafa5c54d45408da78bb9b6bfb2e4618651d7ad38360d5741d",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "url contains credentials",
+      "expected": "url contains credentials"
+    },
+    "neg_non_443_port": {
+      "name": "Reject Explicit Non-443 Port",
+      "fn": "register_page",
+      "args": [
+        "Port Rejection",
+        "https://example.com:8080/"
+      ],
+      "txHash": "0xf7d9e19692b05c1203b4e6176633179c6d117533588dca5bd99154d446aa7384",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "url port not allowed",
+      "expected": "url port not allowed"
+    },
+    "neg_url_too_long": {
+      "name": "Reject Over-Length URL",
+      "fn": "register_page",
+      "args": [
+        "Overlong Rejection",
+        "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "txHash": "0x9ae12b673b4c870853d02048430857869bdafc08f7ebe017a5139f7c8a4b2a48",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "url too long",
+      "expected": "url too long"
+    },
+    "neg_non_html_url": {
+      "name": "Reject Non-HTML MIME / Payload",
+      "fn": "audit_page",
+      "args": [
+        "a81c34eb3d29"
+      ],
+      "txHash": "0xf2c073c96dd2a3ed43f3491910cc1538e5d49d3231fddd227327cfbecc47bab9",
+      "status": "UNDETERMINED",
+      "result": "MAJORITY_DISAGREE",
+      "agreeCount": "0/5",
+      "revertPayload": "not an html page",
+      "expected": "not an html page"
+    },
+    "neg_unknown_page_id": {
+      "name": "Audit Nonexistent Page ID",
+      "fn": "audit_page",
+      "args": [
+        "000000000000"
+      ],
+      "txHash": "0x24c992221eb763234a696e24147d45e845109caedc4d0805fe220e6bfca2b4f6",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "page not found",
+      "expected": "page not found"
+    },
+    "neg_duplicate_registration": {
+      "name": "Duplicate Page Registration",
+      "fn": "register_page",
+      "args": [
+        "Duplicate Good",
+        "https://huzyow155.github.io/alt-check-fixtures/good.html"
+      ],
+      "txHash": "0x0ee8413f22de3f8e7d446c82acc651d326bc1a2dc0c556004aaee4a92dd8673b",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "3/5",
+      "revertPayload": "page already registered",
+      "expected": "page already registered"
+    },
+    "neg_cooldown_active": {
+      "name": "Audit Cooldown Active",
+      "fn": "audit_page",
+      "args": [
+        "b7eea06d23f8"
+      ],
+      "txHash": "0xf70a3c55fa6796796021dbcae1ad7febc12660679b6516592a8a3242af741a35",
+      "status": "FINALIZED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "3/5",
+      "revertPayload": "\u0000",
+      "expected": "audit cooldown active"
+    },
+    "neg_non_registrant_note": {
+      "name": "Non-Registrant Maintainer Note Rejection",
+      "fn": "add_maintainer_note",
+      "args": [
+        "b7eea06d23f8",
+        2,
+        "Unauthorized maintainer note attempt"
+      ],
+      "txHash": "0x62e43f97bfb67b5f72a39f1f96c47fe5831f7e9be5e07c5b46cbbc2439c93898",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "only the registrant can do this",
+      "expected": "only the registrant can do this"
+    },
+    "neg_note_length_short": {
+      "name": "Maintainer Note Too Short (< 5 chars)",
+      "fn": "add_maintainer_note",
+      "args": [
+        "b7eea06d23f8",
+        2,
+        "hi"
+      ],
+      "txHash": "0x7376aaeab642d8e9bfd9868ae181a9393a5e97c62406e7f077a16e4c486b921b",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "5/5",
+      "revertPayload": "note length out of range",
+      "expected": "note length out of range"
+    },
+    "neg_non_registrant_retire": {
+      "name": "Non-Registrant Retire Page Rejection",
+      "fn": "retire_page",
+      "args": [
+        "b7eea06d23f8"
+      ],
+      "txHash": "0x4b6920a2370e1a30b067c242dde49b486e500565cf3b04e867f32ca0c424dc5b",
+      "status": "FINALIZED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": "3/5",
+      "revertPayload": "only the registrant can do this",
+      "expected": "only the registrant can do this"
+    }
+  },
+  "finalizedMeasurement": {
+    "txHash": "0xf49c85bd84833fb8ebd54b9cd8b6b0f40718056372cc62407c455069615d5adf",
+    "polls": 1,
+    "elapsedSeconds": "0.67",
+    "finalStatus": "FINALIZED"
+  },
+  "boardState": {
+    "best": [
+      {
+        "id": "7a3668090880",
+        "label": "Accessible Portfolio Demonstration",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/good.html",
+        "score": 100,
+        "grade": "A"
+      },
+      {
+        "id": "b7eea06d23f8",
+        "label": "Verifiable Accessibility Remediation Demo",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/demo.html",
+        "score": 100,
+        "grade": "A"
+      },
+      {
+        "id": "2d7c92cd241c",
+        "label": "Consensus Model Layer Calibration Site",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/mixed.html",
+        "score": 88,
+        "grade": "B"
+      },
+      {
+        "id": "fb8e88494068",
+        "label": "Defective Legacy Form & Media",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/bad.html",
+        "score": 25,
+        "grade": "F"
+      }
+    ],
+    "most_improved": [
+      {
+        "id": "b7eea06d23f8",
+        "label": "Verifiable Accessibility Remediation Demo",
+        "url": "https://huzyow155.github.io/alt-check-fixtures/demo.html",
+        "delta": 75,
+        "first_score": 25,
+        "latest_score": 100
+      }
+    ]
+  },
+  "unitTestedOnly": [
+    "Model layer prompt injection fallback (penalty cap 10 bounds impact)",
+    "Maximum audits per page (12 audits cap per registered URL)",
+    "Large HTML body truncation (MAX_BODY_BYTES = 300,000 bytes)",
+    "Pagination boundary tests (offset < 0, limit > 50, limit < 1)"
+  ]
+}

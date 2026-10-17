@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Accessible Demo Page - AltCheck Ledger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <header>
+    <p>AltCheck Accessibility Ledger Verified Demo Site</p>
+  </header>
+  <main>
+    <h1>Accessible Page Demonstration</h1>
+    <p>This accessible static demonstration document contains fully labeled controls, descriptive imagery alt descriptions, semantic heading hierarchies, and standard accessibility landmarks designed for full compliance with the AltCheck inspection ledger.</p>
+
+    <h2>Account Profile Setup</h2>
+    <p>Please provide your profile details below to complete registration.</p>
+
+    <form action="/submit" method="post">
+      <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username">
+      </div>
+      <div>
+        <label for="useremail">Email address</label>
+        <input type="email" id="useremail" name="useremail">
+      </div>
+      <div>
+        <label for="role-select">Select user role</label>
+        <select id="role-select" name="role">
+          <option value="developer">Core Software Engineer</option>
+          <option value="auditor">Accessibility Verification Auditor</option>
+        </select>
+      </div>
+      <div>
+        <label for="bio-text">Brief professional biography</label>
+        <textarea id="bio-text" name="bio" rows="4"></textarea>
+      </div>
+      <div>
+        <button type="submit" id="submit-btn" aria-label="Submit registration details">Submit Profile</button>
+      </div>
+    </form>
+
+    <h2>Documented Architecture Assets</h2>
+    <p>Review the architecture diagrams and documentation materials below before proceeding.</p>
+
+    <div>
+      <img src="arch.svg" alt="Architectural block diagram showing consensus validator flow and smart contract state ledger">
+      <img src="divider.png" alt="" role="presentation">
+    </div>
+
+    <div>
+      <a href="/docs/release-notes.html">Detailed technical release notes for version two milestone</a>
+      <a href="/docs/spec.html" aria-label="Read full WCAG consensus specification document">Full WCAG consensus specification</a>
+    </div>
+
+    <h2>Interactive Verification Widget</h2>
+    <div>
+      <iframe src="about:blank" title="Interactive consensus verification widget display"></iframe>
+    </div>
+  </main>
+  <footer>
+    <p>Verified static fixture maintained for the AltCheck GenLayer Studionet consensus ledger test suite.</p>
+  </footer>
+</body>
+</html>

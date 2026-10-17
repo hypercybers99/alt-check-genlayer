@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mixed Accessibility Evaluation Demo - AltCheck</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <header>
+    <p>Consensus Model Layer Evaluation Test Page</p>
+  </header>
+  <main>
+    <h1>Mixed Accessibility Quality Demonstration</h1>
+    <p>This demonstration document contains clean semantic markup alongside a carefully calibrated mixture of clear and vague descriptions to thoroughly exercise the intelligent model evaluation layer under consensus.</p>
+
+    <h2>Visual Analytics and Project Progress</h2>
+    <p>Below are data visualizations and design artifacts produced by our engineering team.</p>
+
+    <!-- Clear alt texts (passing R1 and R2) -->
+    <div>
+      <img src="chart-signups.svg" alt="Bar chart showing monthly registered developer signups from January to December 2025">
+      <img src="campus-cambridge.jpg" alt="Aerial photograph of the University of Cambridge computer laboratory building in spring">
+      <img src="consensus-flow.png" alt="Infographic detailing the three-stage consensus pipeline from leader propose to validator vote">
+      <img src="modal-metrics.png" alt="Screenshot of the transaction inspection modal displaying gas metrics and error payloads">
+    </div>
+
+    <h2>Informal Team Updates</h2>
+    <p>The following internal photographs document informal development sessions.</p>
+
+    <!-- Vague alt texts (passing R1 and R2 deterministic checks, but vague out of context) -->
+    <div>
+      <img src="snap1.jpg" alt="the thing we made last week">
+      <img src="snap2.jpg" alt="what happened earlier today">
+      <img src="snap3.jpg" alt="some interesting items">
+      <img src="snap4.jpg" alt="stuff and other content">
+    </div>
+
+    <h2>Technical Documentation and Resources</h2>
+    <p>Access our detailed consensus references and release archives.</p>
+
+    <!-- Clear links (passing R4) -->
+    <div>
+      <a href="/archive/2025-report.pdf">Download the complete 2025 accessibility consensus annual audit report</a>
+      <a href="/validators/status">View the real-time validator node uptime and voting distribution monitor</a>
+    </div>
+
+    <h2>Miscellaneous Community Discussions</h2>
+    <p>Follow ongoing community dialogue across our discussion channels.</p>
+
+    <!-- Vague links (passing R4 deterministic check, but vague out of context) -->
+    <div>
+      <a href="/threads/update">check out that update</a>
+      <a href="/threads/thoughts">see our thoughts on it</a>
+    </div>
+
+    <!-- 1 minor deterministic violation: positive tabindex -->
+    <div tabindex="1">
+      <p>A focusable container with an explicit positive tabindex setting.</p>
+    </div>
+  </main>
+</body>
+</html>

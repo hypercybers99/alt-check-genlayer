@@ -1,0 +1,122 @@
+{
+  "probeAddress": "0xC40bf93bA9c3f1cf9A1088087C4c7156E538FB95",
+  "deployTxHash": "0xeecc2d204f91eae6ce63444e251f69a2d71463d86edca0f2edf050edfe5593ba",
+  "deployStatus": "ACCEPTED",
+  "consensusResult": "MAJORITY_AGREE",
+  "deployElapsedSeconds": "14.78",
+  "sourceSha256": "c7b2966c2ea5dcfa263da0f662f51add37167e490a6ff1bfd2b0d32c075e3520",
+  "tests": [
+    {
+      "desc": "P1 & P2 Capabilities Probe (web.get headers/attrs, html.parser, html.unescape)",
+      "fnName": "probe_p1_p2_capabilities",
+      "args": [
+        "https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1380390650"
+      ],
+      "txHash": "0xf3113d3a3469c2d375d667f7518f0311d70343a3391c85f5be712cb0fb03c988",
+      "durationSec": "16.51",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"web_get\": {\"status\": 200, \"attrs\": [\"body\", \"headers\", \"status\"], \"headers_keys\": [\"accept-ch\", \"accept-ranges\", \"age\", \"cache-control\", \"content-language\", \"content-security-policy\", \"content-type\", \"date\", \"last-modified\", \"nel\", \"report-to\", \"reporting-endpoints\", \"server\", \"server-timing\", \"set-cookie\", \"strict-transport-security\", \"vary\", \"x-analytics\", \"x-cache\", \"x-cache-status\", \"x-client-ip\", \"x-content-type-options\", \"x-request-id\"], \"content_type\": \"text/html; charset=UTF-8\", \"body_len\": 1331305, \"body_sample\": \"<!DOCTYPE html>\\n<html class=\\\"client-nojs vector-feature-language-in-header-enabled vector-feature-language-in-main-menu-disabled vector-feature-language-in-main-page-header-disabled vector-feature-pag\", \"has_url\": false, \"url_val\": \"\"}, \"html_parser\": {\"importable\": true, \"tags\": [[\"div\", {\"class\": \"demo\"}], [\"img\", {\"src\": \"test.png\", \"alt\": \"photo\"}], [\"h1\", {}]]}, \"html_unescape\": {\"importable\": true, \"sample\": \"<tag attr=\\\"val\\\"> & copy\\u00a9\"}}"
+    },
+    {
+      "desc": "P3 & P4 Size & Validator Consistency Probe (Alan Turing oldid 1380390650)",
+      "fnName": "probe_fetch_size_and_consistency",
+      "args": [
+        "https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1380390650"
+      ],
+      "txHash": "0xa5a13df1502049279b68295ec178852ee0d1da778f9d9cf9161953d7ae7e91f4",
+      "durationSec": "13.14",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"url\": \"https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1380390650\", \"status\": 200, \"body_len\": 1331304, \"body_sha256\": \"ccd3fe5da2d039aeca416ae4725645cabc40c8950a395754b335d0c4c072d32b\", \"img_count\": 40, \"a_count\": 2839, \"h1_count\": 1}"
+    },
+    {
+      "desc": "P5 Batch 16-item Prompt (Run 1 of 5)",
+      "fnName": "probe_prompt_batch",
+      "args": [
+        "You are an accessibility auditor. Return strictly JSON in this exact structure: {\"labels\":[{\"i\":0,\"label\":\"CLEAR\"}, ...]}. Items:\n[{\"id\":0,\"text\":\"Item 0: Button label or image alt text sample description\"},{\"id\":1,\"text\":\"Item 1: Button label or image alt text sample description\"},{\"id\":2,\"text\":\"Item 2: Button label or image alt text sample description\"},{\"id\":3,\"text\":\"Item 3: Button label or image alt text sample description\"},{\"id\":4,\"text\":\"Item 4: Button label or image alt text sample description\"},{\"id\":5,\"text\":\"Item 5: Button label or image alt text sample description\"},{\"id\":6,\"text\":\"Item 6: Button label or image alt text sample description\"},{\"id\":7,\"text\":\"Item 7: Button label or image alt text sample description\"},{\"id\":8,\"text\":\"Item 8: Button label or image alt text sample description\"},{\"id\":9,\"text\":\"Item 9: Button label or image alt text sample description\"},{\"id\":10,\"text\":\"Item 10: Button label or image alt text sample description\"},{\"id\":11,\"text\":\"Item 11: Button label or image alt text sample description\"},{\"id\":12,\"text\":\"Item 12: Button label or image alt text sample description\"},{\"id\":13,\"text\":\"Item 13: Button label or image alt text sample description\"},{\"id\":14,\"text\":\"Item 14: Button label or image alt text sample description\"},{\"id\":15,\"text\":\"Item 15: Button label or image alt text sample description\"}]"
+      ],
+      "txHash": "0x2be176e1c988cee830aaf2b206b18c63a5f908046aca6142b6e1543ee29d1446",
+      "durationSec": "20.38",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"raw\": {\"labels\": [{\"i\": 0, \"label\": \"CLEAR\"}, {\"i\": 1, \"label\": \"CLEAR\"}, {\"i\": 2, \"label\": \"CLEAR\"}, {\"i\": 3, \"label\": \"CLEAR\"}, {\"i\": 4, \"label\": \"CLEAR\"}, {\"i\": 5, \"label\": \"CLEAR\"}, {\"i\": 6, \"label\": \"CLEAR\"}, {\"i\": 7, \"label\": \"CLEAR\"}, {\"i\": 8, \"label\": \"CLEAR\"}, {\"i\": 9, \"label\": \"CLEAR\"}, {\"i\": 10, \"label\": \"CLEAR\"}, {\"i\": 11, \"label\": \"CLEAR\"}, {\"i\": 12, \"label\": \"CLEAR\"}, {\"i\": 13, \"label\": \"CLEAR\"}, {\"i\": 14, \"label\": \"CLEAR\"}, {\"i\": 15, \"label\": \"CLEAR\"}]}}"
+    },
+    {
+      "desc": "P5 Batch 16-item Prompt (Run 2 of 5)",
+      "fnName": "probe_prompt_batch",
+      "args": [
+        "You are an accessibility auditor. Return strictly JSON in this exact structure: {\"labels\":[{\"i\":0,\"label\":\"CLEAR\"}, ...]}. Items:\n[{\"id\":0,\"text\":\"Item 0: Button label or image alt text sample description\"},{\"id\":1,\"text\":\"Item 1: Button label or image alt text sample description\"},{\"id\":2,\"text\":\"Item 2: Button label or image alt text sample description\"},{\"id\":3,\"text\":\"Item 3: Button label or image alt text sample description\"},{\"id\":4,\"text\":\"Item 4: Button label or image alt text sample description\"},{\"id\":5,\"text\":\"Item 5: Button label or image alt text sample description\"},{\"id\":6,\"text\":\"Item 6: Button label or image alt text sample description\"},{\"id\":7,\"text\":\"Item 7: Button label or image alt text sample description\"},{\"id\":8,\"text\":\"Item 8: Button label or image alt text sample description\"},{\"id\":9,\"text\":\"Item 9: Button label or image alt text sample description\"},{\"id\":10,\"text\":\"Item 10: Button label or image alt text sample description\"},{\"id\":11,\"text\":\"Item 11: Button label or image alt text sample description\"},{\"id\":12,\"text\":\"Item 12: Button label or image alt text sample description\"},{\"id\":13,\"text\":\"Item 13: Button label or image alt text sample description\"},{\"id\":14,\"text\":\"Item 14: Button label or image alt text sample description\"},{\"id\":15,\"text\":\"Item 15: Button label or image alt text sample description\"}]"
+      ],
+      "txHash": "0x03f8c87ad1b330891b175b163a1b4b4d2dcdb6d78f8a91ea015e093f44f93330",
+      "durationSec": "16.16",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"raw\": {\"labels\": [{\"i\": 0, \"label\": \"CLEAR\"}, {\"i\": 1, \"label\": \"CLEAR\"}, {\"i\": 2, \"label\": \"CLEAR\"}, {\"i\": 3, \"label\": \"CLEAR\"}, {\"i\": 4, \"label\": \"CLEAR\"}, {\"i\": 5, \"label\": \"CLEAR\"}, {\"i\": 6, \"label\": \"CLEAR\"}, {\"i\": 7, \"label\": \"CLEAR\"}, {\"i\": 8, \"label\": \"CLEAR\"}, {\"i\": 9, \"label\": \"CLEAR\"}, {\"i\": 10, \"label\": \"CLEAR\"}, {\"i\": 11, \"label\": \"CLEAR\"}, {\"i\": 12, \"label\": \"CLEAR\"}, {\"i\": 13, \"label\": \"CLEAR\"}, {\"i\": 14, \"label\": \"CLEAR\"}, {\"i\": 15, \"label\": \"CLEAR\"}]}}"
+    },
+    {
+      "desc": "P5 Batch 16-item Prompt (Run 3 of 5)",
+      "fnName": "probe_prompt_batch",
+      "args": [
+        "You are an accessibility auditor. Return strictly JSON in this exact structure: {\"labels\":[{\"i\":0,\"label\":\"CLEAR\"}, ...]}. Items:\n[{\"id\":0,\"text\":\"Item 0: Button label or image alt text sample description\"},{\"id\":1,\"text\":\"Item 1: Button label or image alt text sample description\"},{\"id\":2,\"text\":\"Item 2: Button label or image alt text sample description\"},{\"id\":3,\"text\":\"Item 3: Button label or image alt text sample description\"},{\"id\":4,\"text\":\"Item 4: Button label or image alt text sample description\"},{\"id\":5,\"text\":\"Item 5: Button label or image alt text sample description\"},{\"id\":6,\"text\":\"Item 6: Button label or image alt text sample description\"},{\"id\":7,\"text\":\"Item 7: Button label or image alt text sample description\"},{\"id\":8,\"text\":\"Item 8: Button label or image alt text sample description\"},{\"id\":9,\"text\":\"Item 9: Button label or image alt text sample description\"},{\"id\":10,\"text\":\"Item 10: Button label or image alt text sample description\"},{\"id\":11,\"text\":\"Item 11: Button label or image alt text sample description\"},{\"id\":12,\"text\":\"Item 12: Button label or image alt text sample description\"},{\"id\":13,\"text\":\"Item 13: Button label or image alt text sample description\"},{\"id\":14,\"text\":\"Item 14: Button label or image alt text sample description\"},{\"id\":15,\"text\":\"Item 15: Button label or image alt text sample description\"}]"
+      ],
+      "txHash": "0x4f3f7388da68bcd11645c9bca160928ec8af242330f5d4050bfa1c96c652873c",
+      "durationSec": "16.05",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"raw\": {\"labels\": []}}"
+    },
+    {
+      "desc": "P5 Batch 16-item Prompt (Run 4 of 5)",
+      "fnName": "probe_prompt_batch",
+      "args": [
+        "You are an accessibility auditor. Return strictly JSON in this exact structure: {\"labels\":[{\"i\":0,\"label\":\"CLEAR\"}, ...]}. Items:\n[{\"id\":0,\"text\":\"Item 0: Button label or image alt text sample description\"},{\"id\":1,\"text\":\"Item 1: Button label or image alt text sample description\"},{\"id\":2,\"text\":\"Item 2: Button label or image alt text sample description\"},{\"id\":3,\"text\":\"Item 3: Button label or image alt text sample description\"},{\"id\":4,\"text\":\"Item 4: Button label or image alt text sample description\"},{\"id\":5,\"text\":\"Item 5: Button label or image alt text sample description\"},{\"id\":6,\"text\":\"Item 6: Button label or image alt text sample description\"},{\"id\":7,\"text\":\"Item 7: Button label or image alt text sample description\"},{\"id\":8,\"text\":\"Item 8: Button label or image alt text sample description\"},{\"id\":9,\"text\":\"Item 9: Button label or image alt text sample description\"},{\"id\":10,\"text\":\"Item 10: Button label or image alt text sample description\"},{\"id\":11,\"text\":\"Item 11: Button label or image alt text sample description\"},{\"id\":12,\"text\":\"Item 12: Button label or image alt text sample description\"},{\"id\":13,\"text\":\"Item 13: Button label or image alt text sample description\"},{\"id\":14,\"text\":\"Item 14: Button label or image alt text sample description\"},{\"id\":15,\"text\":\"Item 15: Button label or image alt text sample description\"}]"
+      ],
+      "txHash": "0x83e6c85b251309afc19b296dfeae16f9632cc5d7d1e887999f9cc1380bc14ff5",
+      "durationSec": "11.76",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"raw\": {\"labels\": [{\"i\": 0, \"label\": \"CLEAR\"}, {\"i\": 1, \"label\": \"CLEAR\"}, {\"i\": 2, \"label\": \"CLEAR\"}, {\"i\": 3, \"label\": \"CLEAR\"}, {\"i\": 4, \"label\": \"CLEAR\"}, {\"i\": 5, \"label\": \"CLEAR\"}, {\"i\": 6, \"label\": \"CLEAR\"}, {\"i\": 7, \"label\": \"CLEAR\"}, {\"i\": 8, \"label\": \"CLEAR\"}, {\"i\": 9, \"label\": \"CLEAR\"}, {\"i\": 10, \"label\": \"CLEAR\"}, {\"i\": 11, \"label\": \"CLEAR\"}, {\"i\": 12, \"label\": \"CLEAR\"}, {\"i\": 13, \"label\": \"CLEAR\"}, {\"i\": 14, \"label\": \"CLEAR\"}, {\"i\": 15, \"label\": \"CLEAR\"}]}}"
+    },
+    {
+      "desc": "P5 Batch 16-item Prompt (Run 5 of 5)",
+      "fnName": "probe_prompt_batch",
+      "args": [
+        "You are an accessibility auditor. Return strictly JSON in this exact structure: {\"labels\":[{\"i\":0,\"label\":\"CLEAR\"}, ...]}. Items:\n[{\"id\":0,\"text\":\"Item 0: Button label or image alt text sample description\"},{\"id\":1,\"text\":\"Item 1: Button label or image alt text sample description\"},{\"id\":2,\"text\":\"Item 2: Button label or image alt text sample description\"},{\"id\":3,\"text\":\"Item 3: Button label or image alt text sample description\"},{\"id\":4,\"text\":\"Item 4: Button label or image alt text sample description\"},{\"id\":5,\"text\":\"Item 5: Button label or image alt text sample description\"},{\"id\":6,\"text\":\"Item 6: Button label or image alt text sample description\"},{\"id\":7,\"text\":\"Item 7: Button label or image alt text sample description\"},{\"id\":8,\"text\":\"Item 8: Button label or image alt text sample description\"},{\"id\":9,\"text\":\"Item 9: Button label or image alt text sample description\"},{\"id\":10,\"text\":\"Item 10: Button label or image alt text sample description\"},{\"id\":11,\"text\":\"Item 11: Button label or image alt text sample description\"},{\"id\":12,\"text\":\"Item 12: Button label or image alt text sample description\"},{\"id\":13,\"text\":\"Item 13: Button label or image alt text sample description\"},{\"id\":14,\"text\":\"Item 14: Button label or image alt text sample description\"},{\"id\":15,\"text\":\"Item 15: Button label or image alt text sample description\"}]"
+      ],
+      "txHash": "0xc061120742169e888a80f22542d042dcdb395db2f5d741cd6060cddd30da41e4",
+      "durationSec": "13.36",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"raw\": {\"labels\": [{\"i\": 0, \"label\": \"CLEAR\"}, {\"i\": 1, \"label\": \"CLEAR\"}, {\"i\": 2, \"label\": \"CLEAR\"}, {\"i\": 3, \"label\": \"CLEAR\"}, {\"i\": 4, \"label\": \"CLEAR\"}, {\"i\": 5, \"label\": \"CLEAR\"}, {\"i\": 6, \"label\": \"CLEAR\"}, {\"i\": 7, \"label\": \"CLEAR\"}, {\"i\": 8, \"label\": \"CLEAR\"}, {\"i\": 9, \"label\": \"CLEAR\"}, {\"i\": 10, \"label\": \"CLEAR\"}, {\"i\": 11, \"label\": \"CLEAR\"}, {\"i\": 12, \"label\": \"CLEAR\"}, {\"i\": 13, \"label\": \"CLEAR\"}, {\"i\": 14, \"label\": \"CLEAR\"}, {\"i\": 15, \"label\": \"CLEAR\"}]}}"
+    },
+    {
+      "desc": "P6 Redirect Behavior Probe (http redirect)",
+      "fnName": "probe_p1_p2_capabilities",
+      "args": [
+        "http://httpbin.org/redirect/1"
+      ],
+      "txHash": "0x7c1d4dbb7898e8af82f144284a0f52a66af86c38cf28876c3aace207b50c1b1f",
+      "durationSec": "10.65",
+      "status": "ACCEPTED",
+      "result": "MAJORITY_AGREE",
+      "agreeCount": 3,
+      "totalVotes": 5,
+      "viewResult": "{\"web_get\": {\"status\": 200, \"attrs\": [\"body\", \"headers\", \"status\"], \"headers_keys\": [\"access-control-allow-credentials\", \"access-control-allow-origin\", \"connection\", \"content-length\", \"content-type\", \"date\", \"server\"], \"content_type\": \"application/json\", \"body_len\": 332, \"body_sample\": \"{\\n  \\\"args\\\": {}, \\n  \\\"headers\\\": {\\n    \\\"Accept\\\": \\\"*/*\\\", \\n    \\\"Accept-Encoding\\\": \\\"gzip\\\", \\n    \\\"Host\\\": \\\"httpbin.org\\\", \\n    \\\"Referer\\\": \\\"http://httpbin.org/redirect/1\\\", \\n    \\\"User-Agent\\\": \\\"reqwest\\\", \\n    \\\"X-\", \"has_url\": false, \"url_val\": \"\"}, \"html_parser\": {\"importable\": true, \"tags\": [[\"div\", {\"class\": \"demo\"}], [\"img\", {\"src\": \"test.png\", \"alt\": \"photo\"}], [\"h1\", {}]]}, \"html_unescape\": {\"importable\": true, \"sample\": \"<tag attr=\\\"val\\\"> & copy\\u00a9\"}}"
+    }
+  ]
+}

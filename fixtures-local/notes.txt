@@ -1,0 +1,3 @@
+AltCheck Test Suite
+This plain text document does not contain HTML tags.
+Auditing this URL must revert with UserError: not an html page.
