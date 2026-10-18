@@ -22,8 +22,10 @@ The local reference auditor (`scripts/tools/local_audit.py`) and the contract ru
 | `fixed.html` | `FULL` | 100 (A) | 100 (A) | 100 (A) | **Exact Match**: All R1-R12 counts = 0 (+75 point improvement) |
 | `mixed.html` | `FULL` | 98 (A)* | 98 (A) | 98 (A) | **Exact Match**: R10:1 (Deterministic base score 98 before model penalty) |
 | `shell.html` | `SHELL_ONLY` | -1 (N/A) | -1 (N/A) | -1 (N/A) | **Exact Match**: Head rules clean, body rules bypassed |
+| `large.html` | `FULL` (partial) | 90 (B)** | 90 (B)** | 90 (B)** | **Exact Match**: 3000/3215 elements analyzed; `partial: true`; grade capped at B; unverified: R5, R8, R11 |
 
 *\*Note: `mixed.html` score represents deterministic rules baseline before model penalty.*
+*\*\*Note: `large.html` deterministic score is 100 with a 10 pt model penalty (8 vague links) yielding 90; Grade is capped at B due to `partial: true`.*
 
 ---
 
@@ -31,11 +33,17 @@ The local reference auditor (`scripts/tools/local_audit.py`) and the contract ru
 
 Three public static URLs were inspected using raw-HTML consensus rules. Measurements are reported neutrally:
 
-| Target Page URL | Raw Byte Size | Detection Mode | Truncated? | Measured Score | Grade | Detected Findings |
+| Target Page URL | Raw Byte Size | Detection Mode | Truncated? | Measured Score | Grade | Detected Findings & Partial Behavior |
 | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
 | `https://example.com/` | 577 bytes | `SHELL_ONLY` | No | -1 | `N/A` | Visible text < 200 chars in lone container; client shell detected. |
 | `https://httpbin.org/html` | 3,739 bytes | `FULL` | No | 87 | `B` | `R6:1` (no `<html lang>`), `R7:1` (no `<title>`), `R11:1` (no `<main>` landmark). |
-| `https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1380390650` | 1,326,241 bytes | `FULL` | Yes (`MAX_BODY_BYTES`) | 100 | `A` | Clean semantic structure; truncated at 300,000 bytes. |
+| `https://en.wikipedia.org/w/index.php?title=Alan_Turing&oldid=1380390650` | 1,326,241 bytes | `FULL` | Yes (Bytes & Elements) | 100 | `B` (capped) | Body truncated at 300,000 bytes; elements parsed up to `MAX_ELEMENTS = 3000`; `partial: true`; Grade capped at B; whole-document rules R5, R8, R11 marked "unverified (partial)". |
+
+### Runtime Calibration of Element Limit (`MAX_ELEMENTS = 3000`)
+In v1.0.0, `MAX_ELEMENTS` was set to 1,000, causing silent truncation on pages exceeding 1,000 nodes without setting a partial flag. Empirical calibration of the custom non-backtracking `DOMParser` on a 300 KB slice of the 1.33 MB Wikipedia document demonstrated:
+- 300,000 bytes tokenized and evaluated in **0.059 seconds** (well within the GenVM ~60s execution budget).
+- Raising `MAX_ELEMENTS` from 1,000 to 3,000 captures comprehensive structural trees while bounding memory and avoiding infinite recursion.
+- When `elements_dropped > 0` or `truncated == true`, `partial: true` is permanently recorded, capping the grade at B and documenting unverified whole-document rules.
 
 ---
 

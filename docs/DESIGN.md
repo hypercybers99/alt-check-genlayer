@@ -20,6 +20,8 @@ AltCheck is explicitly engineered with strict scope boundaries that are transpar
 4. **No Direct Screen Reader Simulation**: AltCheck does not simulate physical assistive technology devices or test keyboard focus navigation.
 5. **Client-Rendered SPAs (`SHELL_ONLY` Mode)**: Modern Single-Page Applications (SPAs) built with React, Next.js, Nuxt, or Vue often deliver an empty container (`<div id="root"></div>`) alongside client JavaScript bundles. AltCheck detects this pattern honestly: when visible text is below `SHELL_TEXT_THRESHOLD` (200 characters) and script tags or lone root containers are present, it records mode `SHELL_ONLY`, sets score = -1 and grade = "N/A", and issues the note: *"client-rendered page: body not auditable from raw HTML"*. It never fabricates an artificial passing score for an empty HTML shell.
 6. **Subset of WCAG**: AltCheck evaluates a deterministic subset of 12 critical WCAG rules (R1 through R12). An audit is an on-chain ledger entry, not an official legal compliance certificate.
+7. **Redirect Targets Not Restricted**: The GenLayer runtime follows HTTP redirects internally and does not expose the final URL or redirect chain to the contract execution environment. Consequently, AltCheck cannot see or restrict redirect targets; the audited HTML is whatever the registered https URL ultimately serves. The URL policy constrains the registered URL, not the destination server.
+8. **Element Truncation & Partial Audits**: Documents exceeding `MAX_ELEMENTS` (3,000 elements) or `MAX_BODY_BYTES` (300 KB) are flagged with `partial: true`. For partial audits, the grade is capped at B, an explicit partial audit notice is recorded, and rules requiring full-document scope (R5, R8, R11) are marked "unverified (partial)" rather than clean if zero violations were found in the evaluated prefix. Partial audits rank below full audits on the leaderboard for identical scores.
 
 ---
 
@@ -143,7 +145,7 @@ Empirical on-chain measurements on GenLayer Studionet (Preview) established the 
 | Constant | Value | Rationale |
 | :--- | :--- | :--- |
 | `MAX_BODY_BYTES` | `300000` (300 KB) | Proven to parse in < 15 seconds within the GenVM block execution budget while capturing 99% of static document markup. |
-| `MAX_ELEMENTS` | `1000` | Bounds memory consumption during DOM tokenization. |
+| `MAX_ELEMENTS` | `3000` | Raised from 1,000 based on runtime calibration (300 KB Wikipedia benchmark parses in 0.059 s); safely bounds memory and loop iterations within the ~60 s Studionet budget. |
 | `SHELL_TEXT_THRESHOLD` | `200` chars | Reliable boundary separating client SPA shells from real server-rendered text. |
 | `AUDIT_COOLDOWN_SECONDS` | `300` seconds | Enforces a 5-minute spacing between audits to prevent spam and allow CDN cache revalidation. |
 | `MAX_AUDITS_PER_PAGE` | `12` | Bounded audit history per registered page identifier. |
@@ -153,11 +155,11 @@ Empirical on-chain measurements on GenLayer Studionet (Preview) established the 
 | `MODEL_PENALTY_CAP` | `10` points | Upper bound on subjective model layer score deduction. |
 | `PAGE_LIMIT_MAX` | `50` | Maximum items returned in paginated view calls. |
 
-### Redirect Policy
-Probe P1 and P6 established that the GenVM runtime HTTP client (`reqwest`) follows HTTP redirects automatically, but the returned `Response` struct exposes only `status`, `headers`, and `body` (destination URL is not accessible). Consequently, AltCheck:
-1. Enforces strict URL policies on the requested URL prior to dispatch.
-2. Rejects all `http://` URLs (https only).
-3. Verifies `content-type` header and scans the first 2,048 bytes of the body for valid HTML markers (`<!doctype html`, `<html`, `<head`, `<body`).
+### Redirect Policy & Destination Limitations
+Probes P1 and P6 established that the GenVM runtime HTTP client (`reqwest`) follows HTTP redirects automatically, but the returned `Response` struct exposes only `status`, `headers`, and `body` (destination URL and redirect chains are not accessible to contract code). Consequently, AltCheck:
+1. Enforces strict URL policies on the registered URL prior to dispatch (scheme, host, credentials, ports, IP literals).
+2. Honestly acknowledges that the contract cannot see or restrict redirect targets; the audited HTML is whatever the registered https URL ultimately serves.
+3. Verifies `content-type` header and scans the first 2,048 bytes of the received body for valid HTML markers (`<!doctype html`, `<html`, `<head`, `<body`). If non-HTML MIME or payload is received, the leader and validators use the consensus FAIL protocol to revert cleanly with `"not an html page"`.
 
 ---
 

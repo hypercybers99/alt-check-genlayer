@@ -82,7 +82,7 @@ async function main() {
   const deployments = {
     network: "GenLayer Studionet (Preview)",
     chainId: 61999,
-    version: "1.0.0",
+    version: "1.0.1",
     rpc: RPC_URL,
     explorerBase: "https://explorer-studio.genlayer.com",
     deployerAddress: account.address,
@@ -98,7 +98,17 @@ async function main() {
     },
     supersededDeployments: [
       {
+        contract: "AltCheck",
+        version: "1.0.0",
+        address: "0xBA2D886E76b87feD8dCd5be61fccFA2A4e1D388A",
+        deployTxHash: "0xf2ec73168cf65d504ddedf4b965bce56d9fa399c86a955ce98f06600e992f9db",
+        sourceSha256: "b9c55a75970aca12f11edaf447e16a09a1d9a8a661e068e3ef2a5cddaa00e202",
+        reason: "superseded by v1.0.1 (element truncation tracking, partial grade cap, clean non-HTML consensus revert)",
+        archivedAt: "2026-10-18T14:45:00Z"
+      },
+      {
         contract: "Probe",
+        version: "0.1.0",
         address: "0xC40bf93bA9c3f1cf9A1088087C4c7156E538FB95",
         deployTxHash: "0xeecc2d204f91eae6ce63444e251f69a2d71463d86edca0f2edf050edfe5593ba",
         sourceSha256: "c7b2966c2ea5dcfa263da0f662f51add37167e490a6ff1bfd2b0d32c075e3520",

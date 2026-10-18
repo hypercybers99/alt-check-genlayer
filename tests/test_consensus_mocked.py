@@ -142,6 +142,43 @@ class TestConsensusMocked(unittest.TestCase):
         b_val = _compute_vague_bucket(4)
         self.assertNotEqual(b_leader, b_val)
 
+    def test_leader_hiding_partiality_rejected_by_validator(self):
+        # Leader claims page is not partial, but validator calculates partial: true
+        url = "https://example.com/hide-partial.html"
+        items = [f'<li><a href="/item/{i}">Link {i}</a></li>' for i in range(1600)]
+        html = f'<!DOCTYPE html><html lang="en"><head><title>Large</title></head><body><main><h1>Title</h1><ul>{"".join(items)}</ul></main></body></html>'
+        genlayer.gl.nondet.web.pages[url] = html
+
+        # Malicious leader crafts audit with partial: false and elements_seen: 1000
+        fake_leader = json.dumps({
+            "mode": "FULL",
+            "rule_counts": {r: 0 for r in ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12"]},
+            "vague_bucket": 0,
+            "partial": False,
+            "elements_seen": 1000,
+            "elements_analyzed": 1000,
+            "audit_record": {"score": 100, "grade": "A", "partial": False}
+        })
+
+        from AltCheck import _evaluate_deterministic_rules
+        val_eval = _evaluate_deterministic_rules(html)
+        self.assertTrue(val_eval["partial"])
+        self.assertNotEqual(val_eval["partial"], json.loads(fake_leader)["partial"])
+        self.assertNotEqual(val_eval["elements_seen"], json.loads(fake_leader)["elements_seen"])
+
+    def test_non_html_fail_consensus_reverts_cleanly(self):
+        # When leader and validators both see non-HTML data.json, consensus agreement on FAIL|not an html page reverts cleanly with UserError
+        url = "https://example.com/data.json"
+        json_data = '{"status": "ok", "count": 42}'
+        genlayer.gl.nondet.web.pages[url] = json_data
+
+        self.contract.register_page("JSON Endpoint", url)
+        page_id = json.loads(self.contract.list_page_ids(0, 10))[0]
+
+        with self.assertRaises(genlayer.gl.vm.UserError) as ctx:
+            self.contract.audit_page(page_id)
+        self.assertEqual(str(ctx.exception), "not an html page")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -33,7 +33,7 @@ MODEL_PENALTY_PER_VAGUE = 2
 MODEL_PENALTY_CAP = 10
 PAGE_LIMIT_MAX = 50
 MAX_BODY_BYTES = 300000
-MAX_ELEMENTS = 1000
+MAX_ELEMENTS = 3000
 
 RULE_IDS = ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12"]
 
@@ -229,8 +229,11 @@ class DOMParser(html.parser.HTMLParser):
         self.visible_text_parts = []
         self.ignored_stack = 0
         self.title_stack = 0
+        self.elements_seen = 0
+        self.elements_dropped = 0
 
     def handle_starttag(self, tag, attrs):
+        self.elements_seen += 1
         tag_lower = tag.lower()
         attr_dict = {k.lower(): (v if v is not None else "") for k, v in attrs if k is not None}
         raw_snippet = self.get_starttag_text() or f"<{tag}>"
@@ -256,6 +259,8 @@ class DOMParser(html.parser.HTMLParser):
 
         if len(self.elements) < MAX_ELEMENTS:
             self.elements.append(node)
+        else:
+            self.elements_dropped += 1
 
         if parent is not None:
             parent.children.append(node)
@@ -592,6 +597,18 @@ def _evaluate_deterministic_rules(raw_html: str) -> dict:
                     rule_counts["R12"] += 1
                     add_snippet("R12", el.raw_tag)
 
+    # Element metrics & partial audit tracking
+    elements_seen = parser.elements_seen
+    elements_analyzed = len(parser.elements)
+    elements_truncated = parser.elements_dropped > 0
+    is_partial = truncated or elements_truncated
+
+    unverified_rules = []
+    if is_partial and mode == "FULL":
+        for r_id in ("R5", "R8", "R11"):
+            if rule_counts[r_id] == 0:
+                unverified_rules.append(r_id)
+
     # Deterministic item selection for model layer
     selected_alts = [c for c in model_candidates if c["kind"] == "alt"][:MODEL_ALT_SAMPLE]
     selected_links = [c for c in model_candidates if c["kind"] == "link"][:MODEL_LINK_SAMPLE]
@@ -635,6 +652,11 @@ def _evaluate_deterministic_rules(raw_html: str) -> dict:
         "visible_text_chars": visible_text_len,
         "script_tag_count": parser.script_tag_count,
         "truncated": truncated,
+        "elements_seen": elements_seen,
+        "elements_analyzed": elements_analyzed,
+        "elements_truncated": elements_truncated,
+        "partial": is_partial,
+        "unverified_rules": unverified_rules,
         "deterministic_score": deterministic_score,
         "model_eval_payload": model_eval_payload,
     }
@@ -784,7 +806,9 @@ class AltCheck(gl.Contract):
             "latest_mode": "",
             "latest_score": -1,
             "latest_grade": "",
+            "latest_partial": False,
             "best_score": -1,
+            "best_partial": False,
             "first_full_score": -1,
             "last_audit_ts": 0,
             "retired": False,
@@ -824,10 +848,10 @@ class AltCheck(gl.Contract):
             try:
                 resp = gl.nondet.web.get(target_url)
             except Exception:
-                raise gl.vm.UserError("fetch failed")
+                return "FAIL|fetch failed"
 
             if not hasattr(resp, "status") or resp.status != 200:
-                raise gl.vm.UserError("fetch failed")
+                return "FAIL|fetch failed"
 
             body_bytes = resp.body if hasattr(resp, "body") else b""
             if isinstance(body_bytes, str):
@@ -841,7 +865,7 @@ class AltCheck(gl.Contract):
             # Verify HTML signature within first 2048 bytes
             sample_prefix = body_text[:2048].lower()
             if not any(token in sample_prefix for token in ("<!doctype html", "<html", "<head", "<body")):
-                raise gl.vm.UserError("not an html page")
+                return "FAIL|not an html page"
 
             # Check content-type header if present
             if hasattr(resp, "headers") and resp.headers:
@@ -851,7 +875,7 @@ class AltCheck(gl.Contract):
                         ct = v.decode("utf-8", errors="replace").lower() if isinstance(v, (bytes, bytearray)) else str(v).lower()
                         break
                 if ct and "html" not in ct and "xhtml" not in ct:
-                    raise gl.vm.UserError("not an html page")
+                    return "FAIL|not an html page"
 
             # 2. Evaluate deterministic rules
             eval_res = _evaluate_deterministic_rules(body_text)
@@ -862,6 +886,11 @@ class AltCheck(gl.Contract):
             visible_text_chars = eval_res["visible_text_chars"]
             script_tag_count = eval_res["script_tag_count"]
             truncated = eval_res["truncated"]
+            elements_seen = eval_res["elements_seen"]
+            elements_analyzed = eval_res["elements_analyzed"]
+            elements_truncated = eval_res["elements_truncated"]
+            is_partial = eval_res["partial"]
+            unverified_rules = eval_res["unverified_rules"]
             det_score = eval_res["deterministic_score"]
             model_items = eval_res["model_eval_payload"]
 
@@ -875,18 +904,31 @@ class AltCheck(gl.Contract):
 
             final_score = -1
             final_grade = "N/A"
+            partial_note = ""
             if mode == "FULL":
                 final_score = max(0, det_score - model_penalty)
-                if final_score >= 90:
-                    final_grade = "A"
-                elif final_score >= 80:
-                    final_grade = "B"
-                elif final_score >= 65:
-                    final_grade = "C"
-                elif final_score >= 50:
-                    final_grade = "D"
+                if is_partial:
+                    # Partial audit: grade capped at B
+                    if final_score >= 80:
+                        final_grade = "B"
+                    elif final_score >= 65:
+                        final_grade = "C"
+                    elif final_score >= 50:
+                        final_grade = "D"
+                    else:
+                        final_grade = "F"
+                    partial_note = f"partial audit: only the first {len(body_bytes)} bytes / {elements_analyzed} elements were analyzed"
                 else:
-                    final_grade = "F"
+                    if final_score >= 90:
+                        final_grade = "A"
+                    elif final_score >= 80:
+                        final_grade = "B"
+                    elif final_score >= 65:
+                        final_grade = "C"
+                    elif final_score >= 50:
+                        final_grade = "D"
+                    else:
+                        final_grade = "F"
 
             vague_bucket = _compute_vague_bucket(vague_count)
 
@@ -900,6 +942,12 @@ class AltCheck(gl.Contract):
                 "cross_host_redirect": False,
                 "fetched_bytes": len(body_bytes),
                 "truncated": truncated,
+                "elements_seen": elements_seen,
+                "elements_analyzed": elements_analyzed,
+                "elements_truncated": elements_truncated,
+                "partial": is_partial,
+                "partial_note": partial_note,
+                "unverified_rules": unverified_rules,
                 "body_sha256": body_sha256,
                 "mode": mode,
                 "visible_text_chars": visible_text_chars,
@@ -919,6 +967,9 @@ class AltCheck(gl.Contract):
                 "mode": mode,
                 "rule_counts": rule_counts,
                 "vague_bucket": vague_bucket,
+                "partial": is_partial,
+                "elements_seen": elements_seen,
+                "elements_analyzed": elements_analyzed,
                 "audit_record": audit_record,
             })
 
@@ -926,11 +977,54 @@ class AltCheck(gl.Contract):
             if not isinstance(leaders_res, gl.vm.Return):
                 return False
 
+            leader_raw = str(leaders_res.calldata)
+
+            if leader_raw.startswith("FAIL|"):
+                expected_err = leader_raw[5:]
+                def val_check_fail():
+                    try:
+                        resp = gl.nondet.web.get(target_url)
+                    except Exception:
+                        return "FAIL|fetch failed"
+
+                    if not hasattr(resp, "status") or resp.status != 200:
+                        return "FAIL|fetch failed"
+
+                    b = resp.body if hasattr(resp, "body") else b""
+                    if isinstance(b, str):
+                        b = b.encode("utf-8")
+                    elif not isinstance(b, (bytes, bytearray)):
+                        b = str(b).encode("utf-8")
+                    b_text = b.decode("utf-8", errors="replace")
+
+                    sample = b_text[:2048].lower()
+                    if not any(token in sample for token in ("<!doctype html", "<html", "<head", "<body")):
+                        return "FAIL|not an html page"
+
+                    if hasattr(resp, "headers") and resp.headers:
+                        ct = ""
+                        for k, v in resp.headers.items():
+                            if str(k).lower() == "content-type":
+                                ct = v.decode("utf-8", errors="replace").lower() if isinstance(v, (bytes, bytearray)) else str(v).lower()
+                                break
+                        if ct and "html" not in ct and "xhtml" not in ct:
+                            return "FAIL|not an html page"
+
+                    return "OK"
+
+                sand_fail = gl.vm.spawn_sandbox(val_check_fail)
+                if not isinstance(sand_fail, gl.vm.Return):
+                    return False
+                return sand_fail.calldata == f"FAIL|{expected_err}"
+
             try:
-                leader_json = json.loads(str(leaders_res.calldata))
+                leader_json = json.loads(leader_raw)
                 leader_mode = leader_json["mode"]
                 leader_rule_counts = leader_json["rule_counts"]
                 leader_vague_bucket = leader_json["vague_bucket"]
+                leader_partial = leader_json["partial"]
+                leader_elements_seen = leader_json["elements_seen"]
+                leader_elements_analyzed = leader_json["elements_analyzed"]
             except Exception:
                 return False
 
@@ -938,10 +1032,10 @@ class AltCheck(gl.Contract):
                 try:
                     resp = gl.nondet.web.get(target_url)
                 except Exception:
-                    raise gl.vm.UserError("fetch failed")
+                    return {"fail": "fetch failed"}
 
                 if not hasattr(resp, "status") or resp.status != 200:
-                    raise gl.vm.UserError("fetch failed")
+                    return {"fail": "fetch failed"}
 
                 b = resp.body if hasattr(resp, "body") else b""
                 if isinstance(b, str):
@@ -950,7 +1044,16 @@ class AltCheck(gl.Contract):
 
                 sample = b_text[:2048].lower()
                 if not any(token in sample for token in ("<!doctype html", "<html", "<head", "<body")):
-                    raise gl.vm.UserError("not an html page")
+                    return {"fail": "not an html page"}
+
+                if hasattr(resp, "headers") and resp.headers:
+                    ct = ""
+                    for k, v in resp.headers.items():
+                        if str(k).lower() == "content-type":
+                            ct = v.decode("utf-8", errors="replace").lower() if isinstance(v, (bytes, bytearray)) else str(v).lower()
+                            break
+                    if ct and "html" not in ct and "xhtml" not in ct:
+                        return {"fail": "not an html page"}
 
                 res = _evaluate_deterministic_rules(b_text)
 
@@ -963,6 +1066,9 @@ class AltCheck(gl.Contract):
                     "mode": res["mode"],
                     "rule_counts": res["rule_counts"],
                     "vague_bucket": _compute_vague_bucket(val_vague),
+                    "partial": res["partial"],
+                    "elements_seen": res["elements_seen"],
+                    "elements_analyzed": res["elements_analyzed"],
                 }
 
             sand_res = gl.vm.spawn_sandbox(val_fetch_and_eval)
@@ -970,10 +1076,19 @@ class AltCheck(gl.Contract):
                 return False
 
             val_data = sand_res.calldata
-            if not isinstance(val_data, dict):
+            if not isinstance(val_data, dict) or "fail" in val_data:
                 return False
 
             if val_data.get("mode") != leader_mode:
+                return False
+
+            if val_data.get("partial") != leader_partial:
+                return False
+
+            if val_data.get("elements_seen") != leader_elements_seen:
+                return False
+
+            if val_data.get("elements_analyzed") != leader_elements_analyzed:
                 return False
 
             if leader_mode == "FULL":
@@ -988,7 +1103,13 @@ class AltCheck(gl.Contract):
             return True
 
         consensus_raw = gl.vm.run_nondet_unsafe(leader_fn, validator_fn)
-        consensus_data = json.loads(str(consensus_raw))
+        consensus_str = str(consensus_raw)
+
+        if consensus_str.startswith("FAIL|"):
+            err_msg = consensus_str[5:]
+            raise gl.vm.UserError(err_msg)
+
+        consensus_data = json.loads(consensus_str)
         stored_audit = consensus_data["audit_record"]
 
         # Persist audit record
@@ -1004,6 +1125,7 @@ class AltCheck(gl.Contract):
         page["latest_mode"] = stored_audit["mode"]
         page["latest_score"] = stored_audit["score"]
         page["latest_grade"] = stored_audit["grade"]
+        page["latest_partial"] = stored_audit.get("partial", False)
         page["last_audit_ts"] = now_ts
 
         if stored_audit["mode"] == "FULL":
@@ -1011,6 +1133,7 @@ class AltCheck(gl.Contract):
                 page["first_full_score"] = stored_audit["score"]
             if stored_audit["score"] > page["best_score"]:
                 page["best_score"] = stored_audit["score"]
+                page["best_partial"] = stored_audit.get("partial", False)
 
             # Update board aggregates in O(1)
             # 1. Best board
@@ -1022,8 +1145,10 @@ class AltCheck(gl.Contract):
                 "url": page["url"],
                 "score": stored_audit["score"],
                 "grade": stored_audit["grade"],
+                "partial": stored_audit.get("partial", False),
             })
-            best_list.sort(key=lambda x: x["score"], reverse=True)
+            # Ranking: full audits above partial audits when scores are equal
+            best_list.sort(key=lambda x: (x["score"], not x.get("partial", False)), reverse=True)
             self.meta["board_best"] = json.dumps(best_list[:PAGE_LIMIT_MAX])
 
             # 2. Most improved board (requires >= 2 audits and first_full_score >= 0)
@@ -1038,8 +1163,9 @@ class AltCheck(gl.Contract):
                     "delta": delta,
                     "first_score": page["first_full_score"],
                     "latest_score": stored_audit["score"],
+                    "partial": stored_audit.get("partial", False),
                 })
-                improved_list.sort(key=lambda x: x["delta"], reverse=True)
+                improved_list.sort(key=lambda x: (x["delta"], not x.get("partial", False)), reverse=True)
                 self.meta["board_improved"] = json.dumps(improved_list[:PAGE_LIMIT_MAX])
 
         self.pages[page_id] = json.dumps(page)
@@ -1181,6 +1307,8 @@ class AltCheck(gl.Contract):
             "earlier_score": prev_audit["score"],
             "latest_score": latest_audit["score"],
             "score_delta": score_delta,
+            "earlier_partial": prev_audit.get("partial", False),
+            "latest_partial": latest_audit.get("partial", False),
             "grade_change": {
                 "from": prev_audit["grade"],
                 "to": latest_audit["grade"],

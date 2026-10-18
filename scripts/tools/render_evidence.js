@@ -29,7 +29,7 @@ This document records verified on-chain execution evidence obtained on **GenLaye
 
 | Contract | Address | Deploy Tx Hash | Source SHA-256 (Local & On-Chain) | Status | Consensus |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **AltCheck** (v1.0.0) | [\`${altCheck.contractAddress}\`](${altCheck.explorerUrl}) | \`${altCheck.deployTxHash}\` | \`${altCheck.sourceSha256}\` | ${altCheck.deployStatus} | ${altCheck.consensusResult} |
+| **AltCheck** (v1.0.1) | [\`${altCheck.contractAddress}\`](${altCheck.explorerUrl}) | \`${altCheck.deployTxHash}\` | \`${altCheck.sourceSha256}\` | ${altCheck.deployStatus} | ${altCheck.consensusResult} |
 
 ### Contract Addresses & Lifecycle
 
@@ -66,6 +66,11 @@ This document records verified on-chain execution evidence obtained on **GenLaye
     md += `| **Scenario 4: SPA Shell Detection** | [\`shell.html\`](${s4.url}) | \`${s4.registerTx}\` | \`${s4.auditTx}\` | ${s4.auditAgree} | \`${s4.mode}\` | ${s4.score} | **${s4.grade}** | Client SPA shell detected; body inspection honestly bypassed |\n`;
   }
 
+  const s4b = evidence.partialScenario;
+  if (s4b) {
+    md += `| **Scenario 4B: Large Document Partial Audit** | [\`large.html\`](${s4b.url}) | \`${s4b.registerTx}\` | \`${s4b.auditTx}\` | ${s4b.auditAgree} | \`${s4b.mode}\` | ${s4b.score} | **${s4b.grade}** (capped) | Partial audit: ${s4b.elementsAnalyzed}/${s4b.elementsSeen} elements analyzed; unverified rules: \`${JSON.stringify(s4b.unverifiedRules)}\` |\n`;
+  }
+
   md += `\n---\n\n## 3. Secondary Scenario: Verifiable Remediation on Single Page ID (demo.html)\n\n`;
   const s5 = evidence.secondaryScenario;
   if (s5) {
@@ -90,8 +95,8 @@ This document records verified on-chain execution evidence obtained on **GenLaye
     }
   }
 
-  md += `\n---\n\n## 4. Negative Tests & Revert Payloads (14 On-Chain Reverts)\n\n`;
-  md += `All 14 negative rejection rules were evaluated on GenLayer Studionet (Preview) through the transaction consensus pipeline:\n\n`;
+  md += `\n---\n\n## 4. Negative Tests & Revert Payloads\n\n`;
+  md += `Negative rejection rules evaluated on GenLayer Studionet (Preview) through the transaction consensus pipeline:\n\n`;
   md += `| Test Case | Invoked Function | Transaction Hash | Status | Consensus | Decoded UserError Payload |\n`;
   md += `| :--- | :--- | :--- | :--- | :--- | :--- |\n`;
 
@@ -100,22 +105,50 @@ This document records verified on-chain execution evidence obtained on **GenLaye
     md += `| **${v.name}** | \`${v.fn}\` | \`${v.txHash}\` | ${v.status} | ${v.result} (${v.agreeCount}) | \`${v.revertPayload}\` |\n`;
   }
 
-  if (evidence.finalizedMeasurement) {
-    const fm = evidence.finalizedMeasurement;
-    md += `\n---\n\n## 5. Transaction Finality Measurement\n\n`;
-    md += `- **Measured Transaction**: \`${fm.txHash}\`\n`;
-    md += `- **Final Status**: \`${fm.finalStatus}\`\n`;
-    md += `- **Elapsed Time to Finality**: ${fm.elapsedSeconds}s (${fm.polls} polling intervals)\n`;
+  if (evidence.unexpectedOrSupersededRuns && evidence.unexpectedOrSupersededRuns.length > 0) {
+    md += `\n---\n\n## 5. Unexpected or Superseded Runs\n\n`;
+    md += `| Description | Tx Hash | Contract | Status | Result / Votes | Root Cause & Resolution |\n`;
+    md += `| :--- | :--- | :--- | :--- | :--- | :--- |\n`;
+    for (const r of evidence.unexpectedOrSupersededRuns) {
+      md += `| **${r.description}** | \`${r.txHash}\` | \`${r.contractAddress}\` | ${r.status} | ${r.result} (${r.votes}) | ${r.rootCause} **Resolution**: ${r.resolution} |\n`;
+    }
   }
 
-  md += `\n---\n\n## 6. Partitioned Verification Scope: On-Chain vs. Unit-Tested Only\n\n`;
+  if (evidence.timingMeasurements) {
+    const tm = evidence.timingMeasurements;
+    md += `\n---\n\n## 6. Multi-Transaction Finality & Timing Measurements\n\n`;
+    md += `Real on-chain latency and finality measured across write transactions on GenLayer Studionet (Preview):\n\n`;
+    md += `| Operation | Function | Tx Hash | Submit Time (UTC) | Time to ACCEPTED (s) | Final Status | Time to FINALIZED (s) |\n`;
+    md += `| :--- | :--- | :--- | :--- | :---: | :---: | :---: |\n`;
+    for (const t of tm.transactions || []) {
+      md += `| ${t.desc} | \`${t.fnName}\` | \`${t.txHash}\` | ${t.submitTime} | ${t.timeToAcceptedSec} | \`${t.finalStatus}\` | ${t.timeToFinalizedSec !== null ? t.timeToFinalizedSec : 'N/A'} |\n`;
+    }
+
+    if (tm.stats) {
+      md += `\n### Latency & Finality Statistics (Min / Median / Max)\n\n`;
+      md += `| Metric | Sample Size | Min (s) | Median (s) | Max (s) | Notes |\n`;
+      md += `| :--- | :---: | :---: | :---: | :---: | :--- |\n`;
+      if (tm.stats.acceptedStats) {
+        const as = tm.stats.acceptedStats;
+        md += `| **Time to ACCEPTED** | ${as.count} | ${as.min} | ${as.median} | ${as.max} | Multi-validator consensus reached |\n`;
+      }
+      if (tm.stats.finalizedStats) {
+        const fsStats = tm.stats.finalizedStats;
+        md += `| **Time to FINALIZED** | ${fsStats.count} | ${fsStats.min} | ${fsStats.median} | ${fsStats.max} | ${fsStats.note} |\n`;
+      }
+    }
+  }
+
+  md += `\n---\n\n## 7. Partitioned Verification Scope: On-Chain vs. Unit-Tested Only\n\n`;
   md += `### Verified On-Chain (GenLayer Studionet Preview)\n`;
   md += `1. **Full-Spectrum Semantic Audit**: Verified on \`good.html\` (Grade A / 100), \`bad.html\` (Grade F / 25), and \`mixed.html\`.\n`;
   md += `2. **Single Page ID Verifiable Progress**: Verified on \`demo.html\` demonstrating on-chain score delta +75 points (Grade F -> A).\n`;
   md += `3. **SPA Shell Honest Detection**: Verified on \`shell.html\` detecting client-rendered shell and reporting \`SHELL_ONLY\`.\n`;
-  md += `4. **14 Negative Revert Classes**: All 14 negative cases reverted on-chain with exact decoded UserError payloads.\n`;
-  md += `5. **Registrant Maintainer Notes**: Verified note append on audit #2 by verified registrant.\n`;
-  md += `6. **Board Indexing & Ranking**: Verified top board rankings for Best Pages and Most Improved Pages.\n\n`;
+  md += `4. **Large Document Partial Audit Guard**: Verified on \`large.html\` with 3,215 elements: capped at Grade B, 3000 elements analyzed, whole-document rules marked unverified.\n`;
+  md += `5. **Agreed Non-HTML Reverts**: Verified on \`data.json\` and \`notes.txt\` reverting cleanly with \`not an html page\` under consensus agreement.\n`;
+  md += `6. **All Negative Revert Classes**: Reverted on-chain with exact decoded UserError payloads.\n`;
+  md += `7. **Registrant Maintainer Notes**: Verified note append on audit #2 by verified registrant.\n`;
+  md += `8. **Board Indexing & Ranking**: Verified top board rankings for Best Pages and Most Improved Pages.\n\n`;
 
   md += `### Unit-Tested Only\n`;
   const uto = evidence.unitTestedOnly || [];
@@ -131,6 +164,19 @@ This document records verified on-chain execution evidence obtained on **GenLaye
     const startTag = '<!-- EVIDENCE_TABLE_START -->';
     const endTag = '<!-- EVIDENCE_TABLE_END -->';
 
+    let timingSummary = "";
+    if (evidence.timingMeasurements?.stats) {
+      const ts = evidence.timingMeasurements.stats;
+      timingSummary = `
+### Multi-Transaction Timing Statistics (Min / Median / Max)
+
+| Metric | Sample Size | Min (s) | Median (s) | Max (s) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Time to ACCEPTED** | ${ts.acceptedStats?.count || 'N/A'} | ${ts.acceptedStats?.min || 'N/A'} | ${ts.acceptedStats?.median || 'N/A'} | ${ts.acceptedStats?.max || 'N/A'} |
+| **Time to FINALIZED** | ${ts.finalizedStats?.count || 'N/A'} | ${ts.finalizedStats?.min || 'N/A'} | ${ts.finalizedStats?.median || 'N/A'} | ${ts.finalizedStats?.max || 'N/A'} |
+`;
+    }
+
     const evidenceSection = `
 ## On-Chain Evidence Summary
 
@@ -138,7 +184,7 @@ This document records verified on-chain execution evidence obtained on **GenLaye
 
 | Contract | Address | Deploy Tx Hash | Source SHA-256 | Status | Consensus |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **AltCheck** (v1.0.0) | [\`${altCheck.contractAddress}\`](${altCheck.explorerUrl}) | \`${altCheck.deployTxHash}\` | \`${altCheck.sourceSha256}\` | ${altCheck.deployStatus} | ${altCheck.consensusResult} |
+| **AltCheck** (v1.0.1) | [\`${altCheck.contractAddress}\`](${altCheck.explorerUrl}) | \`${altCheck.deployTxHash}\` | \`${altCheck.sourceSha256}\` | ${altCheck.deployStatus} | ${altCheck.consensusResult} |
 
 ### Positive Execution Scenarios
 
@@ -148,6 +194,7 @@ This document records verified on-chain execution evidence obtained on **GenLaye
 | **Defective Page** | [\`bad.html\`](${s2?.url}) | \`${s2?.registerTx}\` | \`${s2?.auditTx}\` | ${s2?.auditAgree} | ${s2?.score} | **${s2?.grade}** | 12 rules violated; verbatim snippets verified |
 | **Model Evaluation** | [\`mixed.html\`](${s3?.url}) | \`${s3?.registerTx}\` | \`${s3?.auditTx}\` | ${s3?.auditAgree} | ${s3?.score} | **${s3?.grade}** | Subjective clarity evaluated; penalty ${s3?.modelPenalty} pts |
 | **SPA Shell Detection** | [\`shell.html\`](${s4?.url}) | \`${s4?.registerTx}\` | \`${s4?.auditTx}\` | ${s4?.auditAgree} | ${s4?.score} | **${s4?.grade}** | Client SPA shell honestly flagged as \`SHELL_ONLY\` |
+| **Large Doc Partial** | [\`large.html\`](${s4b?.url}) | \`${s4b?.registerTx}\` | \`${s4b?.auditTx}\` | ${s4b?.auditAgree} | ${s4b?.score} | **${s4b?.grade}** (capped) | Partial audit: ${s4b?.elementsAnalyzed}/${s4b?.elementsSeen} elements; unverified: \`${JSON.stringify(s4b?.unverifiedRules)}\` |
 
 ### Single Page ID Verifiable Progress (\`demo.html\`)
 
@@ -156,6 +203,7 @@ This document records verified on-chain execution evidence obtained on **GenLaye
 - **Remediated State (Clean)**: Score ${s5?.audit2Score} (${s5?.audit2Grade}) | Tx \`${s5?.audit2Tx}\` | Fixtures Commit \`${s5?.remediatedCommit}\`
 - **Verified On-Chain Progress**: \`+${s5?.progress?.score_delta}\` points (Grade transition: \`${s5?.progress?.grade_change?.from}\` -> \`${s5?.progress?.grade_change?.to}\`)
 - **Maintainer Note Tx**: \`${s5?.maintainerNoteTx}\`
+${timingSummary}
 `;
 
     if (readme.includes(startTag) && readme.includes(endTag)) {

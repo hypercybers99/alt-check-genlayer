@@ -225,6 +225,64 @@ class TestContractState(unittest.TestCase):
             self.contract.get_board(0)
         self.assertEqual(str(ctx.exception), "invalid pagination")
 
+    def test_board_ranking_ranks_non_partial_above_partial(self):
+        # Two pages with same score 85: page A is partial, page B is full
+        self.contract.register_page("Partial Page", "https://example.com/part")
+        p_part_id = json.loads(self.contract.list_page_ids(0, 10))[0]
+
+        self.contract.register_page("Full Page", "https://example.com/full")
+        p_full_id = json.loads(self.contract.list_page_ids(0, 10))[0]
+
+        # Seed mock audit for partial page
+        audit_part = {
+            "page_id": p_part_id, "n": 1, "mode": "FULL", "score": 85, "grade": "B",
+            "partial": True, "rule_counts": {}, "notes": []
+        }
+        self.contract.audits[f"{p_part_id}:1"] = json.dumps(audit_part)
+
+        # Seed mock audit for full page
+        audit_full = {
+            "page_id": p_full_id, "n": 1, "mode": "FULL", "score": 85, "grade": "B",
+            "partial": False, "rule_counts": {}, "notes": []
+        }
+        self.contract.audits[f"{p_full_id}:1"] = json.dumps(audit_full)
+
+        # Update board using contract ranking rule: (score, not partial)
+        best_list = [
+            {"id": p_part_id, "label": "Partial Page", "url": "https://example.com/part", "score": 85, "grade": "B", "partial": True},
+            {"id": p_full_id, "label": "Full Page", "url": "https://example.com/full", "score": 85, "grade": "B", "partial": False},
+        ]
+        best_list.sort(key=lambda x: (x["score"], not x.get("partial", False)), reverse=True)
+        self.contract.meta["board_best"] = json.dumps(best_list)
+
+        board = json.loads(self.contract.get_board(10))
+        # Full page must rank above partial page despite same score
+        self.assertEqual(board["best"][0]["id"], p_full_id)
+        self.assertEqual(board["best"][1]["id"], p_part_id)
+        self.assertFalse(board["best"][0]["partial"])
+        self.assertTrue(board["best"][1]["partial"])
+
+    def test_get_progress_carries_partial_flags(self):
+        self.contract.register_page("Prog Site 2", "https://example.com/prog2")
+        page_id = json.loads(self.contract.list_page_ids(0, 10))[0]
+
+        self.contract.audits[f"{page_id}:1"] = json.dumps({
+            "n": 1, "mode": "FULL", "score": 70, "grade": "C", "partial": True,
+            "rule_counts": {r: 0 for r in ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12"]}
+        })
+        self.contract.audits[f"{page_id}:2"] = json.dumps({
+            "n": 2, "mode": "FULL", "score": 95, "grade": "A", "partial": False,
+            "rule_counts": {r: 0 for r in ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12"]}
+        })
+        page = json.loads(self.contract.get_page(page_id))
+        page["audits_total"] = 2
+        self.contract.pages[page_id] = json.dumps(page)
+
+        prog = json.loads(self.contract.get_progress(page_id))
+        self.assertEqual(prog["status"], "OK")
+        self.assertTrue(prog["earlier_partial"])
+        self.assertFalse(prog["latest_partial"])
+
 
 if __name__ == "__main__":
     unittest.main()

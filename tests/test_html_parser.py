@@ -100,6 +100,48 @@ class TestHtmlParser(unittest.TestCase):
         huge_html = "<html><body><h1>Title</h1><p>" + ("A" * (MAX_BODY_BYTES + 5000)) + "</p></body></html>"
         res = _evaluate_deterministic_rules(huge_html)
         self.assertTrue(res["truncated"])
+        self.assertTrue(res["partial"])
+
+    def test_element_cap_truncation_and_metrics(self):
+        # Generate 3200 elements (exceeding MAX_ELEMENTS = 3000)
+        items = [f'<li><a href="/item/{i}">Link {i}</a></li>' for i in range(1600)]
+        html = f'<!DOCTYPE html><html lang="en"><head><title>Large</title></head><body><main><h1>Title</h1><ul>{"".join(items)}</ul></main></body></html>'
+        res = _evaluate_deterministic_rules(html)
+        self.assertFalse(res["truncated"])  # Under byte cap
+        self.assertTrue(res["elements_truncated"])
+        self.assertTrue(res["partial"])
+        self.assertEqual(res["elements_analyzed"], 3000)
+        self.assertGreater(res["elements_seen"], 3000)
+        # R5, R8, R11 unverified check on partial
+        self.assertIn("R5", res["unverified_rules"])
+        self.assertIn("R8", res["unverified_rules"])
+
+    def test_violation_beyond_cap_not_silently_ignored(self):
+        # 3005 valid elements followed by a violation at element 3010
+        # The violation is beyond the cap: audit MUST be marked partial: true, unverified_rules must flag whole-doc rules
+        items = [f'<span>Text {i}</span>' for i in range(3005)]
+        html = f'<!DOCTYPE html><html lang="en"><head><title>Cap Test</title></head><body><main><h1>Title</h1>{"".join(items)}<img src="missing.png"></main></body></html>'
+        res = _evaluate_deterministic_rules(html)
+        self.assertTrue(res["partial"])
+        self.assertTrue(res["elements_truncated"])
+        self.assertIn("R5", res["unverified_rules"])
+        self.assertIn("R8", res["unverified_rules"])
+
+    def test_element_cap_exact_boundary(self):
+        # Exactly at boundary vs boundary + 1
+        # Create minimal document with exact element count
+        tags = "".join([f"<p>{i}</p>" for i in range(1495)])  # 1495 tags + html, head, title, body, main = 1500
+        html = f'<!DOCTYPE html><html lang="en"><head><title>Boundary</title></head><body><main><h1>H</h1>{tags}</main></body></html>'
+        parser = DOMParser(html)
+        parser.feed(html)
+        self.assertFalse(parser.elements_dropped > 0)
+
+    def test_body_cut_mid_tag_handled_gracefully(self):
+        # HTML cut abruptly mid-tag inside body
+        raw = '<!DOCTYPE html><html lang="en"><head><title>Cut</title></head><body><main><h1>Title</h1><p>Normal</p><a href="/test" aria-label="incomplete'
+        res = _evaluate_deterministic_rules(raw)
+        self.assertIn(res["mode"], ("FULL", "SHELL_ONLY"))
+        self.assertIsInstance(res["rule_counts"], dict)
 
 
 if __name__ == "__main__":

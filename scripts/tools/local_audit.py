@@ -29,7 +29,7 @@ MODEL_PENALTY_PER_VAGUE = 2
 MODEL_PENALTY_CAP = 10
 PAGE_LIMIT_MAX = 50
 MAX_BODY_BYTES = 300000
-MAX_ELEMENTS = 1000
+MAX_ELEMENTS = 3000
 
 RULE_IDS = ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12"]
 
@@ -116,8 +116,11 @@ class DOMParser(html.parser.HTMLParser):
         self.visible_text_parts = []
         self.ignored_stack = 0
         self.title_stack = 0
+        self.elements_seen = 0
+        self.elements_dropped = 0
 
     def handle_starttag(self, tag, attrs):
+        self.elements_seen += 1
         tag_lower = tag.lower()
         attr_dict = {k.lower(): (v if v is not None else "") for k, v in attrs if k is not None}
         raw_snippet = self.get_starttag_text() or f"<{tag}>"
@@ -143,6 +146,8 @@ class DOMParser(html.parser.HTMLParser):
 
         if len(self.elements) < MAX_ELEMENTS:
             self.elements.append(node)
+        else:
+            self.elements_dropped += 1
 
         if parent is not None:
             parent.children.append(node)
@@ -464,7 +469,20 @@ def run_audit_on_html(raw_html: str, model_penalty: int = 0) -> dict:
                     rule_counts["R12"] += 1
                     add_snippet("R12", el.raw_tag)
 
+    # Element metrics & partial audit tracking
+    elements_seen = parser.elements_seen
+    elements_analyzed = len(parser.elements)
+    elements_truncated = parser.elements_dropped > 0
+    is_partial = truncated or elements_truncated
+
+    unverified_rules = []
+    if is_partial and mode == "FULL":
+        for r_id in ("R5", "R8", "R11"):
+            if rule_counts[r_id] == 0:
+                unverified_rules.append(r_id)
+
     # Compute score and grade
+    partial_note = ""
     if mode == "SHELL_ONLY":
         score = -1
         grade = "N/A"
@@ -475,16 +493,27 @@ def run_audit_on_html(raw_html: str, model_penalty: int = 0) -> dict:
             deductions += spec["weight"] * min(cnt, spec["cap"])
         det_score = max(0, 100 - deductions)
         score = max(0, det_score - model_penalty)
-        if score >= 90:
-            grade = "A"
-        elif score >= 80:
-            grade = "B"
-        elif score >= 65:
-            grade = "C"
-        elif score >= 50:
-            grade = "D"
+        if is_partial:
+            if score >= 80:
+                grade = "B"
+            elif score >= 65:
+                grade = "C"
+            elif score >= 50:
+                grade = "D"
+            else:
+                grade = "F"
+            partial_note = f"partial audit: only the first {len(raw_html.encode('utf-8'))} bytes / {elements_analyzed} elements were analyzed"
         else:
-            grade = "F"
+            if score >= 90:
+                grade = "A"
+            elif score >= 80:
+                grade = "B"
+            elif score >= 65:
+                grade = "C"
+            elif score >= 50:
+                grade = "D"
+            else:
+                grade = "F"
 
     return {
         "mode": mode,
@@ -496,6 +525,12 @@ def run_audit_on_html(raw_html: str, model_penalty: int = 0) -> dict:
         "visible_text_chars": visible_text_len,
         "script_tag_count": parser.script_tag_count,
         "truncated": truncated,
+        "elements_seen": elements_seen,
+        "elements_analyzed": elements_analyzed,
+        "elements_truncated": elements_truncated,
+        "partial": is_partial,
+        "partial_note": partial_note,
+        "unverified_rules": unverified_rules,
     }
 
 
