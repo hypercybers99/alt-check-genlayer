@@ -83,7 +83,7 @@ $$\text{Final Score} = \max(0, \text{Deterministic Score} - \text{Model Penalty}
 - `meta: TreeMap[str, str]`: Counters (`pages_count`, `audits_count`, `nonce`), O(1) indexed page IDs (`pid:<i>`), duplicate lookup index (`dup:<url>:<sender>`), and top-50 board aggregates (`board_best`, `board_improved`).
 
 ### Write Methods
-- `register_page(label: str, url: str) -> None`: Validates label length (3-80 chars) and URL policy; assigns deterministic 12-hex ID; prevents duplicate registration for same URL + sender.
+- `register_page(label: str, url: str) -> None`: Validates label length (3-80 chars) and URL policy; assigns deterministic 12-hex ID; disallows duplicate registration for same URL + sender.
 - `audit_page(page_id: str) -> None`: Executes consensus audit pipeline; enforces 300s cooldown and 12-audit cap; appends audit record; updates page aggregates and board rankings in $O(1)$.
 - `add_maintainer_note(page_id: str, audit_n: int, note: str) -> None`: Registrant-only; adds explanatory note (5-280 chars, max 3 notes per audit).
 - `retire_page(page_id: str) -> None`: Registrant-only; marks page retired and excludes it from active audits and board rankings.
@@ -168,5 +168,5 @@ node scripts/tools/check_evidence_consistency.js
 5. **Element & Body Truncation (Partial Audits)**: Pages exceeding `MAX_BODY_BYTES` (300 KB) or `MAX_ELEMENTS` (3,000 elements) are audited up to that boundary with `partial: true`. For partial audits, the grade is capped at B, an explicit note is recorded ("partial audit: only the first N bytes / M elements were analyzed"), and whole-document rules (R5 heading order, R8 duplicate ids, R11 main landmark) are marked "unverified (partial)" rather than clean if zero violations were found in the evaluated prefix. Partial audits rank below full audits with identical scores on the leaderboard.
 6. **Page Churn & Consensus Disagreement**: If a target web page alters between the leader's fetch and a validator's fetch, rule counts will differ and validators will disagree. This is an intentional protocol defense against non-reproducible states.
 7. **Subset of WCAG**: Evaluates 12 deterministic criteria; does not represent a full WCAG 2.1 AAA accessibility audit.
-8. **Bounded Model Impact**: Subjective model penalty is capped at 10 points to prevent prompt non-determinism from dominating the audit.
+8. **Bounded Model Impact**: Subjective model penalty is capped at 10 points so prompt non-determinism does not dominate the audit.
 9. **Consensus Agreement**: Typically achieves 3 of 5 validator votes on GenLayer Studionet (Preview).

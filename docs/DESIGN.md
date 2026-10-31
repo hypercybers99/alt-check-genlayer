@@ -4,7 +4,7 @@
 
 Decentralized applications (dApps) and modern websites frequently ship with fundamental accessibility violations: unlabelled form inputs, missing or filename-like image alt text, broken heading hierarchies, uninformative links ("click here"), and viewports that forbid user zooming. 
 
-Traditional auditing tools (such as Lighthouse or axe-core) run locally in developer environments or CI pipelines. While helpful, they generate private, ephemeral reports that can be manipulated, omitted, or selectively published. Users with disabilities and auditing bodies have no public, tamper-resistant, verifiable historical record demonstrating whether a site is truly accessible or whether a development team has made genuine progress over time.
+Traditional auditing tools (such as Lighthouse or axe-core) run locally in developer environments or CI pipelines. While helpful, they generate private, ephemeral reports that can be manipulated, omitted, or selectively published. Users with disabilities and auditing bodies have no public, verifiable historical record demonstrating whether a site has accessible markup or whether a development team has made genuine progress over time.
 
 **AltCheck** addresses this by deploying an autonomous, consensus-audited accessibility ledger on **GenLayer Studionet (Preview)**. Multiple independent validator nodes fetch raw server-delivered HTML, execute deterministic evaluation rules in code, subjectively grade descriptive clarity through bounded language model consensus, and permanently record scores, grades, and remediation deltas on-chain.
 
@@ -20,7 +20,7 @@ AltCheck is explicitly engineered with strict scope boundaries that are transpar
 4. **No Direct Screen Reader Simulation**: AltCheck does not simulate physical assistive technology devices or test keyboard focus navigation.
 5. **Client-Rendered SPAs (`SHELL_ONLY` Mode)**: Modern Single-Page Applications (SPAs) built with React, Next.js, Nuxt, or Vue often deliver an empty container (`<div id="root"></div>`) alongside client JavaScript bundles. AltCheck detects this pattern honestly: when visible text is below `SHELL_TEXT_THRESHOLD` (200 characters) and script tags or lone root containers are present, it records mode `SHELL_ONLY`, sets score = -1 and grade = "N/A", and issues the note: *"client-rendered page: body not auditable from raw HTML"*. It never fabricates an artificial passing score for an empty HTML shell.
 6. **Subset of WCAG**: AltCheck evaluates a deterministic subset of 12 critical WCAG rules (R1 through R12). An audit is an on-chain ledger entry, not an official legal compliance certificate.
-7. **Redirect Targets Not Restricted**: The GenLayer runtime follows HTTP redirects internally and does not expose the final URL or redirect chain to the contract execution environment. Consequently, AltCheck cannot see or restrict redirect targets; the audited HTML is whatever the registered https URL ultimately serves. The URL policy constrains the registered URL, not the destination server.
+7. **Redirect Targets Not Restricted**: The GenLayer runtime follows HTTP redirects internally and does not expose the final URL or redirect chain to the contract execution environment. Consequently, AltCheck cannot see or restrict redirect targets; the audited HTML is whatever the registered https URL ultimately serves. The URL policy checks constrain only the initially registered URL, not the destination server.
 8. **Element Truncation & Partial Audits**: Documents exceeding `MAX_ELEMENTS` (3,000 elements) or `MAX_BODY_BYTES` (300 KB) are flagged with `partial: true`. For partial audits, the grade is capped at B, an explicit partial audit notice is recorded, and rules requiring full-document scope (R5, R8, R11) are marked "unverified (partial)" rather than clean if zero violations were found in the evaluated prefix. Partial audits rank below full audits on the leaderboard for identical scores.
 
 ---
@@ -147,7 +147,7 @@ Empirical on-chain measurements on GenLayer Studionet (Preview) established the 
 | `MAX_BODY_BYTES` | `300000` (300 KB) | Proven to parse in < 15 seconds within the GenVM block execution budget while capturing 99% of static document markup. |
 | `MAX_ELEMENTS` | `3000` | Raised from 1,000 based on runtime calibration (300 KB Wikipedia benchmark parses in 0.059 s); safely bounds memory and loop iterations within the ~60 s Studionet budget. |
 | `SHELL_TEXT_THRESHOLD` | `200` chars | Reliable boundary separating client SPA shells from real server-rendered text. |
-| `AUDIT_COOLDOWN_SECONDS` | `300` seconds | Enforces a 5-minute spacing between audits to prevent spam and allow CDN cache revalidation. |
+| `AUDIT_COOLDOWN_SECONDS` | `300` seconds | Enforces a 5-minute spacing between audits to limit spam and allow CDN cache revalidation. |
 | `MAX_AUDITS_PER_PAGE` | `12` | Bounded audit history per registered page identifier. |
 | `MODEL_ALT_SAMPLE` | `8` | Maximum alt attributes evaluated subjectively. |
 | `MODEL_LINK_SAMPLE` | `8` | Maximum link descriptions evaluated subjectively. |
@@ -157,7 +157,7 @@ Empirical on-chain measurements on GenLayer Studionet (Preview) established the 
 
 ### Redirect Policy & Destination Limitations
 Probes P1 and P6 established that the GenVM runtime HTTP client (`reqwest`) follows HTTP redirects automatically, but the returned `Response` struct exposes only `status`, `headers`, and `body` (destination URL and redirect chains are not accessible to contract code). Consequently, AltCheck:
-1. Enforces strict URL policies on the registered URL prior to dispatch (scheme, host, credentials, ports, IP literals).
+1. Enforces strict URL policies on the registered URL prior to dispatch (scheme, host, credentials, ports, IP literals) which constrain only the initially registered URL.
 2. Honestly acknowledges that the contract cannot see or restrict redirect targets; the audited HTML is whatever the registered https URL ultimately serves.
 3. Verifies `content-type` header and scans the first 2,048 bytes of the received body for valid HTML markers (`<!doctype html`, `<html`, `<head`, `<body`). If non-HTML MIME or payload is received, the leader and validators use the consensus FAIL protocol to revert cleanly with `"not an html page"`.
 
@@ -171,7 +171,7 @@ Probes P1 and P6 established that the GenVM runtime HTTP client (`reqwest`) foll
   1. The model layer evaluates ONLY subjective clarity (it never touches R1-R12 counts or base scoring).
   2. Input items are passed in strict JSON objects with all internal strings escaped.
   3. The prompt explicitly instructs the evaluator to treat inputs strictly as text to evaluate.
-  4. The model penalty is capped at 10 points. Even if an injection succeeds in labeling a vague alt as `CLEAR`, it can at most prevent a 2-point penalty; it can never turn a failing page into a passing grade.
+  4. The model penalty is capped at 10 points. Even if an injection succeeds in labeling a vague alt as `CLEAR`, it can at most avoid a 2-point penalty; it can never turn a failing page into a passing grade.
 
 ### Threat 2: Server-Side Request Forgery (SSRF) & Network Evasion
 - **Attack Vector**: A registrant supplies an internal network address (e.g., `https://127.0.0.1`, `https://169.254.169.254`, or decimal IP equivalents `https://2130706433/`) to probe validator private infrastructure.
@@ -195,7 +195,7 @@ Probes P1 and P6 established that the GenVM runtime HTTP client (`reqwest`) foll
 | Feature | Lighthouse / axe-core | WAVE Web Accessibility | **AltCheck (GenLayer)** |
 | :--- | :--- | :--- | :--- |
 | **Execution Context** | Local CLI / Browser Extension | Browser Extension / Web Service | **Decentralized Multi-Validator Consensus** |
-| **Tamper Resistance** | Low (Ephemeral local report) | Low (Client-side report) | **Immutable On-Chain Ledger Record** |
+| **Storage Integrity** | Low (Ephemeral local report) | Low (Client-side report) | **Permanent On-Chain Ledger Record** |
 | **Historical Verifiability** | None (Static snapshot) | None | **On-Chain Progress Tracking (`get_progress`)** |
 | **Consensus Verification** | None (Single execution) | None (Single execution) | **Consensus Agreement (Typical 3 of 5 nodes)** |
 | **Subjective Evaluation** | Rule-based heuristics only | Heuristics only | **Bounded Model Consensus for Alt/Link Clarity** |

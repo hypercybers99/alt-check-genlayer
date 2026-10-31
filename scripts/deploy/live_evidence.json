@@ -941,9 +941,10 @@
     ]
   },
   "unitTestedOnly": [
+    "Large HTML body truncation at MAX_BODY_BYTES boundary (MAX_BODY_BYTES = 300,000 bytes with partial: true)",
+    "Board tie-breaking ranking cases beyond the 8 registered on-chain fixtures (full audits ordered above partial audits at identical scores)",
     "Model layer prompt injection fallback (penalty cap 10 bounds impact)",
-    "Maximum audits per page (12 audits cap per registered URL)",
-    "Large HTML body truncation (MAX_BODY_BYTES = 300,000 bytes)",
+    "Maximum audits per page boundary (12 audits cap per registered URL)",
     "Pagination boundary tests (offset < 0, limit > 50, limit < 1)"
   ],
   "finalizedMeasurement": {
